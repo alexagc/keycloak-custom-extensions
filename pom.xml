@@ -37,6 +37,7 @@
         <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
         <pitest-plugin.version>1.18.2</pitest-plugin.version>
         <pitest-junit5.version>1.2.2</pitest-junit5.version>
+        <javadoc-plugin.version>3.11.2</javadoc-plugin.version>
     </properties>
 
     <modules>
@@ -201,6 +202,14 @@
                             </googleJavaFormat>
                         </java>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <phase>compile</phase>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -242,6 +251,15 @@
                         <jvmArgs>
                             <jvmArg>-XX:+EnableDynamicAgentLoading</jvmArg>
                         </jvmArgs>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${javadoc-plugin.version}</version>
+                    <configuration>
+                        <release>${maven.compiler.release}</release>
+                        <doclint>all,-missing</doclint>
                     </configuration>
                 </plugin>
             </plugins>

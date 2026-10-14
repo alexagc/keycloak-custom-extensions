@@ -26,8 +26,8 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: Build and Verify with Maven
-        run: mvn -B clean verify --file pom.xml
+      - name: Build, Verify and Validate JavaDoc with Maven
+        run: mvn -B clean verify javadoc:jar --file pom.xml
 
       - name: Generate CI Summary Report
         if: always()

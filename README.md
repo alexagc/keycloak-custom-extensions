@@ -1,6 +1,7 @@
 # Keycloak Custom Extensions
 
-[![CI Pipeline](https://github.com/alexc/keycloak-custom-extensions/actions/workflows/ci.yml/badge.svg)](https://github.com/alexc/keycloak-custom-extensions/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/alexagc/keycloak-custom-extensions/actions/workflows/ci.yml/badge.svg)](https://github.com/alexagc/keycloak-custom-extensions/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/alexagc/keycloak-custom-extensions/actions/workflows/codeql.yml/badge.svg)](https://github.com/alexagc/keycloak-custom-extensions/actions/workflows/codeql.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Keycloak](https://img.shields.io/badge/Keycloak-26.x_(Quarkus)-red.svg)](https://www.keycloak.org/)
 [![Java](https://img.shields.io/badge/Java-21_LTS-orange.svg)](https://adoptium.net/)
@@ -19,7 +20,7 @@ This repository provides production-tested, clean, and decoupled extensions orga
 
 | Category | Extension | Keycloak SPI | Description | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **`event-listeners`** | `webhook` | `EventListenerProvider` | Dispatches Keycloak audit and admin events asynchronously to configurable HTTP Webhooks. | 🟡 In Development |
+| **`event-listeners`** | `webhook` | `EventListenerProvider` | Dispatches Keycloak audit and admin events asynchronously to configurable HTTP Webhooks. | 🟢 Ready |
 | **`protocol-mappers`** | `dynamic-claims` | `OIDCAttributeMapper` | Injects calculated or external metadata claims into JWT access tokens. | ⚪ Planned |
 | **`authenticators`** | `email-domain` | `Authenticator` | Routes users automatically to federated IdPs based on email domain. | ⚪ Planned |
 
@@ -34,7 +35,7 @@ Keycloak on Quarkus installs extensions by copying compiled `.jar` files into th
 FROM quay.io/keycloak/keycloak:26.8.0 as builder
 
 # Download the desired extension JAR directly from GitHub Releases
-ADD https://github.com/alexc/keycloak-custom-extensions/releases/latest/download/keycloak-event-listener-webhook-1.0.0.jar /opt/keycloak/providers/
+ADD https://github.com/alexagc/keycloak-custom-extensions/releases/latest/download/keycloak-event-listener-webhook-1.0.0.jar /opt/keycloak/providers/
 
 # Re-build Keycloak with the custom provider
 RUN /opt/keycloak/bin/kc.sh build

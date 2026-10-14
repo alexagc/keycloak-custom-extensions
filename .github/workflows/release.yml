@@ -42,11 +42,14 @@ jobs:
         run: |
           mkdir -p release-assets
           find extensions -name "*.jar" ! -name "*sources.jar" ! -name "*javadoc.jar" -exec cp {} release-assets/ \;
-          echo "Staged release artifacts:"
-          ls -la release-assets
+          cd release-assets
+          sha256sum *.jar > checksums.sha256
+          echo "Staged release artifacts and checksums:"
+          ls -la
+          cat checksums.sha256
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          files: release-assets/*.jar
+          files: release-assets/*
           generate_release_notes: true
