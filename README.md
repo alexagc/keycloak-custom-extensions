@@ -31,7 +31,7 @@ Keycloak on Quarkus installs extensions by copying compiled `.jar` files into th
 
 ### 1. Direct Download (Docker example)
 ```dockerfile
-FROM quay.io/keycloak/keycloak:26.0.0 as builder
+FROM quay.io/keycloak/keycloak:26.8.0 as builder
 
 # Download the desired extension JAR directly from GitHub Releases
 ADD https://github.com/alexc/keycloak-custom-extensions/releases/latest/download/keycloak-event-listener-webhook-1.0.0.jar /opt/keycloak/providers/
