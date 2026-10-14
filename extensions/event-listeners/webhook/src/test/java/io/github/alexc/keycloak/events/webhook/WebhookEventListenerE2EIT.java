@@ -1,81 +1,106 @@
 package io.github.alexc.keycloak.events.webhook;
 
+import com.github.dasniko.testcontainers.keycloak.KeycloakContainer;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.idm.RealmRepresentation;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
+import org.testcontainers.DockerClientFactory;
+import org.testcontainers.containers.MockServerContainer;
+import org.testcontainers.containers.Network;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import org.testcontainers.utility.MountableFile;
 
-import java.io.File;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockserver.model.HttpRequest.request;
 
 /**
- * End-to-End integration test validating that the Webhook Event Listener SPI
- * deploys into a real Keycloak 26.x Quarkus container, augments via Quarkus,
- * and boots successfully with the provider registered.
+ * Enterprise End-to-End integration test validating that the Webhook Event Listener SPI:
+ * 1. Mounts into a real Keycloak 26.x Quarkus container using testcontainers-keycloak.
+ * 2. Successfully registers into Keycloak's event listener pipeline.
+ * 3. Asynchronously dispatches live events to a dedicated MockServer container on the same Docker network.
+ * 4. Gracefully skips execution on developer machines where Docker is not installed (Zero-Install workflow).
  */
 @Testcontainers
 @Tag("e2e")
 class WebhookEventListenerE2EIT {
 
     private static final String KEYCLOAK_IMAGE = "quay.io/keycloak/keycloak:26.8.0";
+    private static final DockerImageName MOCKSERVER_IMAGE = DockerImageName.parse("mockserver/mockserver:5.15.0");
+
+    @BeforeAll
+    static void checkDockerEnvironment() {
+        // Zero-install support: Skip gracefully on local machines without Docker; runs in GitHub Actions CI
+        boolean dockerAvailable = false;
+        try {
+            dockerAvailable = DockerClientFactory.instance().isDockerAvailable();
+        } catch (Throwable t) {
+            // Docker not running or not installed
+        }
+        Assumptions.assumeTrue(dockerAvailable, "Docker daemon not available; skipping Keycloak Testcontainers E2E test.");
+    }
 
     @Test
-    @DisplayName("Keycloak container should boot and successfully load the webhook provider")
-    void testKeycloakBootsWithWebhookProvider() throws Exception {
-        // Find compiled JAR file in target/
-        File targetDir = new File("target");
-        File[] jarFiles = targetDir.listFiles((dir, name) -> name.endsWith(".jar") && !name.contains("sources") && !name.contains("original"));
+    @DisplayName("Keycloak should dispatch real administrative events to MockServer webhook")
+    void testRealKeycloakDispatchesWebhookToMockServer() {
+        Network network = Network.newNetwork();
 
-        if (jarFiles == null || jarFiles.length == 0) {
-            // In unit-test phase before package, skip gracefully
-            return;
-        }
+        try (MockServerContainer mockServer = new MockServerContainer(MOCKSERVER_IMAGE)
+                .withNetwork(network)
+                .withNetworkAliases("mockserver");
+             KeycloakContainer keycloak = new KeycloakContainer(KEYCLOAK_IMAGE)
+                     .withProviderClassesFrom("target/classes")
+                     .withNetwork(network)
+                     .withNetworkAliases("keycloak")
+                     .withEnv("KC_SPI_EVENTS_LISTENER_WEBHOOK_TARGET_URL", "http://mockserver:1080/webhook")
+                     .withEnv("KC_SPI_EVENTS_LISTENER_WEBHOOK_INCLUDE_ADMIN_EVENTS", "true")) {
 
-        File providerJar = jarFiles[0];
+            mockServer.start();
 
-        try (GenericContainer<?> keycloak = new GenericContainer<>(DockerImageName.parse(KEYCLOAK_IMAGE))
-                .withExposedPorts(8080)
-                .withEnv("KEYCLOAK_ADMIN", "admin")
-                .withEnv("KEYCLOAK_ADMIN_PASSWORD", "admin")
-                .withEnv("KC_SPI_EVENTS_LISTENER_WEBHOOK_TARGET_URL", "https://httpbin.org/post")
-                .withEnv("KC_SPI_EVENTS_LISTENER_WEBHOOK_INCLUDE_EVENTS", "LOGIN,LOGOUT")
-                .withCopyFileToContainer(
-                        MountableFile.forHostPath(providerJar.getAbsolutePath()),
-                        "/opt/keycloak/providers/" + providerJar.getName()
-                )
-                .withCommand("start-dev")
-                .waitingFor(Wait.forLogMessage(".*Listening on:.*8080.*", 1)
-                        .withStartupTimeout(Duration.ofMinutes(3)))) {
+            // Configure MockServer expectation
+            MockServerClient mockServerClient = new MockServerClient(mockServer.getHost(), mockServer.getServerPort());
+            mockServerClient
+                    .when(request().withPath("/webhook").withMethod("POST"))
+                    .respond(HttpResponse.response().withStatusCode(200));
 
+            // Start Keycloak with the Webhook Event Listener registered in the master realm
             keycloak.start();
+            assertTrue(keycloak.isRunning(), "Keycloak container must be running");
 
-            assertTrue(keycloak.isRunning(), "Keycloak container should be running");
+            // Use the pre-authenticated Keycloak Admin Client
+            Keycloak adminClient = keycloak.getKeycloakAdminClient();
 
-            // Query Keycloak health check endpoint
-            Integer port = keycloak.getMappedPort(8080);
-            String healthUrl = "http://" + keycloak.getHost() + ":" + port + "/health/ready";
+            // Enable 'webhook' event listener in master realm
+            RealmRepresentation masterRealm = adminClient.realm("master").toRepresentation();
+            List<String> eventListeners = masterRealm.getEventsListeners();
+            if (eventListeners == null || !eventListeners.contains("webhook")) {
+                masterRealm.setEventsListeners(Collections.singletonList("webhook"));
+                adminClient.realm("master").update(masterRealm);
+            }
 
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(healthUrl))
-                    .timeout(Duration.ofSeconds(10))
-                    .GET()
-                    .build();
+            // Trigger an administrative event by creating a new test realm
+            RealmRepresentation testRealm = new RealmRepresentation();
+            testRealm.setRealm("test-e2e-realm");
+            testRealm.setEnabled(true);
+            adminClient.realms().create(testRealm);
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            assertEquals(200, response.statusCode(), "Keycloak health endpoint should return 200 OK");
+            // Verify MockServer received the webhook POST dispatch
+            HttpRequest[] recordedRequests = mockServerClient.retrieveRecordedRequests(
+                    request().withPath("/webhook").withMethod("POST")
+            );
+
+            assertTrue(recordedRequests.length >= 1, "MockServer should have received at least one webhook dispatch from Keycloak");
+        } finally {
+            network.close();
         }
     }
 }
