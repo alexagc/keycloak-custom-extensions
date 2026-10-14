@@ -50,8 +50,8 @@ class WebhookEventListenerProviderTest {
         when(realmModel.getName()).thenReturn("master");
 
         when(httpResponse.statusCode()).thenReturn(200);
-        when(httpClient.sendAsync(any(HttpRequest.class), any()))
-                .thenReturn(CompletableFuture.completedFuture(httpResponse));
+        doReturn(CompletableFuture.completedFuture(httpResponse))
+                .when(httpClient).sendAsync(any(HttpRequest.class), any());
     }
 
     @Test
@@ -165,7 +165,7 @@ class WebhookEventListenerProviderTest {
 
         CompletableFuture<HttpResponse<Void>> failedFuture = new CompletableFuture<>();
         failedFuture.completeExceptionally(new RuntimeException("Connection refused"));
-        when(httpClient.sendAsync(any(), any())).thenReturn(failedFuture);
+        doReturn(failedFuture).when(httpClient).sendAsync(any(), any());
 
         WebhookEventListenerProvider provider = new WebhookEventListenerProvider(session, httpClient, config);
 
