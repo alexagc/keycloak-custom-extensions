@@ -11,3 +11,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GitHub Actions CI/CD pipelines for validation and automated releases.
 - Universal AI & developer guidelines (`AGENTS.md`).
 - Issue and Pull Request templates.
+- Webhook Event Listener SPI (`extensions/event-listeners/webhook`) implementing non-blocking asynchronous event delivery via Java 21 `HttpClient`.
+- Updated Keycloak target to `26.8.0` and Testcontainers to `1.20.4`.
