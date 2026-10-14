@@ -239,6 +239,9 @@
                         <targetTests>
                             <param>io.github.alexc.keycloak.*Test</param>
                         </targetTests>
+                        <jvmArgs>
+                            <jvmArg>-XX:+EnableDynamicAgentLoading</jvmArg>
+                        </jvmArgs>
                     </configuration>
                 </plugin>
             </plugins>

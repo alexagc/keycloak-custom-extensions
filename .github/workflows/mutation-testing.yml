@@ -1,0 +1,43 @@
+name: Mutation Testing (PITest)
+
+on:
+  schedule:
+    - cron: '0 2 * * 0' # Every Sunday at 02:00 UTC
+  workflow_dispatch: # Allows manual trigger from Actions tab
+
+permissions:
+  contents: read
+
+jobs:
+  pitest:
+    name: Mutation Testing Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Run PITest Mutation Analysis
+        run: mvn -B test-compile org.pitest:pitest-maven:mutationCoverage --file pom.xml
+
+      - name: Upload PITest Reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pitest-reports
+          path: extensions/**/target/pit-reports/**
+          retention-days: 14
+
+      - name: Publish Step Summary
+        if: always()
+        run: |
+          echo "### 🧬 Mutation Testing (PITest) Complete" >> $GITHUB_STEP_SUMMARY
+          echo "PITest mutation reports have been archived as downloadable build artifacts." >> $GITHUB_STEP_SUMMARY
+          echo "Download the \`pitest-reports\` artifact to inspect mutant kill rates and surviving mutants." >> $GITHUB_STEP_SUMMARY

@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build-and-test:
     name: Build & Test (Java 21)
@@ -24,3 +28,43 @@ jobs:
 
       - name: Build and Verify with Maven
         run: mvn -B clean verify --file pom.xml
+
+      - name: Generate CI Summary Report
+        if: always()
+        run: python3 scripts/generate-ci-summary.py ci-summary.md
+
+      - name: Post or Update PR Sticky Comment
+        if: github.event_name == 'pull_request' && always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          HEADER="<!-- jacoco-ci-summary-comment -->"
+          if [ -f ci-summary.md ]; then
+            BODY=$(printf '%s\n\n%s\n' "$HEADER" "$(cat ci-summary.md)")
+            COMMENT_ID=$(gh api repos/"$REPO"/issues/"$PR_NUMBER"/comments --jq ".[] | select(.body | contains(\"$HEADER\")) | .id" | head -n 1)
+            if [ -n "$COMMENT_ID" ]; then
+              echo "Updating existing PR comment #$COMMENT_ID"
+              gh api repos/"$REPO"/issues/comments/"$COMMENT_ID" -X PATCH -f body="$BODY"
+            else
+              echo "Posting new PR comment"
+              gh pr comment "$PR_NUMBER" --body "$BODY"
+            fi
+          fi
+
+      - name: Upload JaCoCo Coverage Reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: jacoco-coverage-reports
+          path: extensions/**/target/site/jacoco/**
+          retention-days: 14
+
+      - name: Upload Surefire Test Reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: surefire-test-reports
+          path: extensions/**/target/*-reports/**
+          retention-days: 14

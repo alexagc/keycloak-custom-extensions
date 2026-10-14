@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Issue and Pull Request templates.
 - Webhook Event Listener SPI (`extensions/event-listeners/webhook`) implementing non-blocking asynchronous event delivery via Java 21 `HttpClient`.
 - Updated Keycloak target to `26.8.0` and Testcontainers to `1.20.4`.
+- Dependabot configuration for automated weekly dependency updates for Maven and GitHub Actions (`.github/dependabot.yml`).
+- Weekly and on-demand PITest mutation testing workflow (`.github/workflows/mutation-testing.yml`).
+- Automated CI test & coverage reporting via GitHub Step Summary and auto-updating sticky Pull Request comments.
+- Build artifact archiving for JaCoCo coverage HTML and Surefire test reports in CI.
 
 ### Changed
 - Modernized GitHub Actions workflows to eliminate Node.js 20 deprecation warnings (`actions/checkout@v7`, `actions/setup-java@v6`, `github/codeql-action/*@v4`, `softprops/action-gh-release@v3`).
