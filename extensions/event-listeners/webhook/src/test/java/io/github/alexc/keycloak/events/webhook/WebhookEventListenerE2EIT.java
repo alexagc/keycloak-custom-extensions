@@ -1,6 +1,6 @@
 package io.github.alexc.keycloak.events.webhook;
 
-import com.github.dasniko.testcontainers.keycloak.KeycloakContainer;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
