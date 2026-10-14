@@ -1,5 +1,6 @@
 package io.github.alexc.keycloak.events.webhook;
 
+import com.google.auto.service.AutoService;
 import org.jboss.logging.Logger;
 import org.keycloak.Config;
 import org.keycloak.events.EventListenerProvider;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  * Singleton factory responsible for lifecycle management, configuration loading,
  * and HTTP client initialization for the Webhook Event Listener SPI.
  */
+@AutoService(EventListenerProviderFactory.class)
 public class WebhookEventListenerProviderFactory implements EventListenerProviderFactory {
 
     private static final Logger LOG = Logger.getLogger(WebhookEventListenerProviderFactory.class);

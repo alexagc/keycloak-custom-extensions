@@ -33,9 +33,10 @@ Keycloak SPIs strictly distinguish between the factory and provider lifecycles:
 * **`Provider`:** Request-scoped or session-scoped object created by `ProviderFactory.create(KeycloakSession session)`. It implements the actual logic.
 * **Lifecycle Cleanup:** Always clean up resources in `Provider.close()`.
 
-### 3.2. Service Registration (`META-INF/services`)
-Every SPI **must** declare its factory implementation in `src/main/resources/META-INF/services/<fully-qualified-SPI-factory-interface>`.
-* Example: `META-INF/services/org.keycloak.events.EventListenerProviderFactory` containing the fully qualified class name of the factory.
+### 3.2. Service Registration (`@AutoService`)
+Every SPI factory implementation **must** be annotated with `@AutoService(<FullyQualifiedFactoryInterface>.class)` from Google AutoService.
+* Example: `@AutoService(EventListenerProviderFactory.class)` on the factory class.
+* Compile-time annotation processing automatically generates the `META-INF/services/` provider descriptor without manual file maintenance.
 
 ### 3.3. Fault Tolerance & Non-Blocking Execution
 * **Event Listeners:** Failures when sending audit events to external targets (HTTP webhooks, message queues) must **never** roll back the user's authentication transaction or break the login flow. Wrap outbound operations in robust `try/catch` and log errors cleanly.
