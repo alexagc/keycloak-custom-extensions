@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build artifact archiving for JaCoCo coverage HTML and Surefire test reports in CI.
 - GitHub Dependency Review action (`.github/workflows/dependency-review.yml`) blocking vulnerable dependencies.
 - Automated SHA-256 checksum generation (`checksums.sha256`) for all released binary artifacts in `release.yml`.
-- Bound `spotless:check` to `compile` phase in Maven build to enforce Google Java Format.
+- Configured Spotless plugin for Google Java Format in DevContainer and manual code formatting.
 - Integrated `javadoc:jar` validation in CI pipeline to verify documentation integrity.
 - Status badges for CI, CodeQL, Keycloak 26.x, Java 21 LTS, and Apache 2.0 in `README.md`.
 
