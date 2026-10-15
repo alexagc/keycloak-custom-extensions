@@ -26,7 +26,7 @@ This repository provides production-tested, clean, and decoupled extensions orga
 | **`authenticators`** | [`age-identity-proofing`](extensions/authenticators/age-identity-proofing/) | `Authenticator` / `RequiredAction` | Privacy-preserving age verification challenge with public eID / eIDAS 2.0 / OpenID4VP gateways and Zero-PII storage. | 🟢 Ready |
 | **`authenticators`** | [`distributed-rate-limiter`](extensions/authenticators/distributed-rate-limiter/) | `Authenticator` | Cluster-wide anti-brute-force rate limiter on Valkey/Redis Sliding Window Counter for Kubernetes multi-pod setups. | 🟢 Ready |
 | **`authenticators`** | [`adaptive-risk`](extensions/authenticators/adaptive-risk/) | `Authenticator` | Zero-Trust Impossible Travel velocity evaluator, IP reputation, and dynamic Step-Up MFA challenge. | 🟢 Ready |
-| **`event-listeners`** | `kafka` | `EventListenerProvider` | Enterprise audit & security event streaming to Apache Kafka with user/realm partitioning. | ⚪ Planned |
+| **`event-listeners`** | [`kafka`](extensions/event-listeners/kafka/) | `EventListenerProvider` | Enterprise audit & security event streaming to Apache Kafka with CloudEvents 1.0 JSON and dynamic realm routing. | 🟢 Ready |
 
 ---
 
