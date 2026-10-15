@@ -38,6 +38,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Zero-PII storage policy: Stores only SHA-256 evidence digest (`age_proof_hash`), issuer identifier (`age_proof_issuer`), and timestamp (`age_verified_at`) in compliance with GDPR Articles 5 and 25.
   - Native cryptographic validation for JWS assertions (RS256/384/512, ES256/384/512) and in-memory JWKS public key cache using Java 21 `HttpClient`.
   - Comprehensive unit test suite (`PublicTrustProviderResolverTest`, `VerifiablePresentationValidatorTest`, `AgeProofingAuthenticatorTest`, `AgeProofingRequiredActionTest`) and Testcontainers E2E integration test (`AgeProofingE2EIT`).
+- Distributed Rate Limiter SPI (`extensions/authenticators/distributed-rate-limiter`) implementing distributed sliding window protection over Valkey and Redis:
+  - `DistributedRateLimiterAuthenticator`: Dual sliding window protection enforcing client IP limits perimetrally and targeted username credential stuffing limits before relational DB queries.
+  - `DistributedRateLimiterAuthenticatorFactory`: Singleton lifecycle manager with automatic `@AutoService` registration and full Keycloak Admin Console configuration properties.
+  - Atomic Lua script execution inside Valkey/Redis managing `ZSET` sliding window timestamps, TTL refreshes, and precise `Retry-After` seconds calculation.
+  - Bundled with official Linux Foundation `io.valkey:valkey-java` (5.5.0) shaded with package relocation to prevent Quarkus classloader conflicts.
+  - RFC-compliant HTTP 429 Too Many Requests response handling with `Retry-After` headers for both REST API JSON clients and Keycloak browser UI error pages.
+  - Comprehensive unit test suite (`RateLimiterConfigTest`, `SlidingWindowScriptTest`, `ValkeyRateLimiterClientTest`, `DistributedRateLimiterAuthenticatorTest`, `DistributedRateLimiterAuthenticatorFactoryTest`) and Testcontainers E2E integration test (`DistributedRateLimiterE2EIT`).
 - Antigravity workflow optimizations including modular directory rules (`extensions/AGENTS.md`), project skills (`keycloak-spi-scaffolder`, `ci-pr-manager`), and subagent blueprints.
 
 ### Changed
