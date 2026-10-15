@@ -119,7 +119,7 @@ public class AdaptiveRiskAuthenticator implements Authenticator {
     String action = formData.getFirst("action");
 
     if ("cancel".equalsIgnoreCase(action)) {
-      context.failure(AuthenticationFlowError.USER_CANCELLED);
+      context.failure(AuthenticationFlowError.GENERIC_AUTHENTICATION_ERROR);
       return;
     }
 
@@ -163,9 +163,9 @@ public class AdaptiveRiskAuthenticator implements Authenticator {
 
     context.getEvent()
         .user(user)
-        .error(Errors.NOT_ALLOWED)
         .detail("risk_score", String.valueOf(result.overallScore()))
-        .detail("risk_level", result.level().name());
+        .detail("risk_level", result.level().name())
+        .error(Errors.NOT_ALLOWED);
 
     Response errorResponse = context.form()
         .setError("adaptiveRiskBlocked")
@@ -244,9 +244,11 @@ public class AdaptiveRiskAuthenticator implements Authenticator {
   }
 
   private boolean isMfaConfigured(UserModel user) {
-    RealmModel realm = session.getContext().getRealm();
-    return session.userCredentialManager().isConfiguredFor(realm, user, OTPCredentialModel.TYPE)
-        || session.userCredentialManager().isConfiguredFor(realm, user, "webauthn")
-        || session.userCredentialManager().isConfiguredFor(realm, user, "webauthn-passwordless");
+    if (user == null || user.credentialManager() == null) {
+      return false;
+    }
+    return user.credentialManager().isConfiguredFor(OTPCredentialModel.TYPE)
+        || user.credentialManager().isConfiguredFor("webauthn")
+        || user.credentialManager().isConfiguredFor("webauthn-passwordless");
   }
 }

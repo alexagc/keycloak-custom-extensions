@@ -33,7 +33,7 @@ import org.keycloak.http.HttpRequest;
 import org.keycloak.models.KeycloakContext;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
-import org.keycloak.models.UserCredentialManager;
+import org.keycloak.models.SubjectCredentialManager;
 import org.keycloak.models.UserModel;
 import org.keycloak.sessions.AuthenticationSessionModel;
 
@@ -52,7 +52,7 @@ class AdaptiveRiskAuthenticatorTest {
   private LoginFormsProvider formsProvider;
   private EventBuilder event;
   private RealmModel realm;
-  private UserCredentialManager credentialManager;
+  private SubjectCredentialManager credentialManager;
 
   @BeforeEach
   void setUp() {
@@ -69,12 +69,12 @@ class AdaptiveRiskAuthenticatorTest {
     formsProvider = mock(LoginFormsProvider.class);
     event = mock(EventBuilder.class);
     realm = mock(RealmModel.class);
-    credentialManager = mock(UserCredentialManager.class);
+    credentialManager = mock(SubjectCredentialManager.class);
 
     KeycloakContext keycloakContext = mock(KeycloakContext.class);
     when(session.getContext()).thenReturn(keycloakContext);
     when(keycloakContext.getRealm()).thenReturn(realm);
-    when(session.userCredentialManager()).thenReturn(credentialManager);
+    when(user.credentialManager()).thenReturn(credentialManager);
 
     when(flowContext.getUser()).thenReturn(user);
     when(flowContext.getAuthenticationSession()).thenReturn(authSession);
@@ -167,7 +167,7 @@ class AdaptiveRiskAuthenticatorTest {
   }
 
   @Test
-  @DisplayName("Action: cancel submission should fail with USER_CANCELLED")
+  @DisplayName("Action: cancel submission should fail with GENERIC_AUTHENTICATION_ERROR")
   void testActionCancel() {
     MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
     params.putSingle("action", "cancel");
@@ -175,7 +175,7 @@ class AdaptiveRiskAuthenticatorTest {
 
     authenticator.action(flowContext);
 
-    verify(flowContext).failure(AuthenticationFlowError.USER_CANCELLED);
+    verify(flowContext).failure(AuthenticationFlowError.GENERIC_AUTHENTICATION_ERROR);
     verify(flowContext, never()).success();
   }
 
@@ -185,7 +185,7 @@ class AdaptiveRiskAuthenticatorTest {
     MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
     params.putSingle("action", "continue");
     when(httpRequest.getDecodedFormParameters()).thenReturn(params);
-    when(credentialManager.isConfiguredFor(any(), any(), any())).thenReturn(false);
+    when(credentialManager.isConfiguredFor(any())).thenReturn(false);
 
     authenticator.action(flowContext);
 
