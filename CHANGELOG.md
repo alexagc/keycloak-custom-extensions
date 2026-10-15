@@ -45,6 +45,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Bundled with official Linux Foundation `io.valkey:valkey-java` (5.5.0) shaded with package relocation to prevent Quarkus classloader conflicts.
   - RFC-compliant HTTP 429 Too Many Requests response handling with `Retry-After` headers for both REST API JSON clients and Keycloak browser UI error pages.
   - Comprehensive unit test suite (`RateLimiterConfigTest`, `SlidingWindowScriptTest`, `ValkeyRateLimiterClientTest`, `DistributedRateLimiterAuthenticatorTest`, `DistributedRateLimiterAuthenticatorFactoryTest`) and Testcontainers E2E integration test (`DistributedRateLimiterE2EIT`).
+- Zero-Trust Adaptive Risk Evaluator SPI (`extensions/authenticators/adaptive-risk`) implementing continuous contextual risk evaluation (CARTA):
+  - `AdaptiveRiskAuthenticator`: Evaluates contextual risk factors (impossible travel velocity, IP reputation, device anomalies) to trigger dynamic Step-Up MFA challenges or preventive blocks.
+  - `AdaptiveRiskAuthenticatorFactory`: Singleton lifecycle manager with compile-time `@AutoService` registration and Keycloak Admin Console SPI configuration properties.
+  - `ImpossibleTravelCalculator`: Great-circle Haversine distance and transit velocity calculator flagging supersonic velocity anomalies exceeding commercial flight limits (>900 km/h).
+  - `IpReputationChecker`: High-performance in-memory detection of verified public TOR exit nodes and anonymous proxies with private/local network bypass.
+  - `DeviceFingerprintEvaluator`: Privacy-preserving SHA-256 client fingerprint generator with automatic historical device recognition and eviction on the user model.
+  - `GeoLocationResolver`: Resilient HTTP header resolution extracting client IP and geographic coordinates from Cloudflare and standard reverse proxy headers (`CF-Connecting-IP`, `X-Forwarded-For`, `CF-IPLatitude`, `CF-IPLongitude`).
+  - `RiskScoringEngine`: Normalized composite risk aggregator (0-100) setting standardized authentication and user session notes (`adaptive_risk_score`, `adaptive_risk_level`, `adaptive_risk_step_up`).
+  - Responsive FreeMarker challenge UI template (`adaptive-risk-challenge.ftl`) with multi-language i18n support (English and Spanish).
+  - Comprehensive unit test suite (`ImpossibleTravelCalculatorTest`, `IpReputationCheckerTest`, `DeviceFingerprintEvaluatorTest`, `GeoLocationResolverTest`, `RiskScoringEngineTest`, `AdaptiveRiskAuthenticatorTest`, `AdaptiveRiskAuthenticatorFactoryTest`) and Testcontainers E2E integration test (`AdaptiveRiskE2EIT`).
 - Antigravity workflow optimizations including modular directory rules (`extensions/AGENTS.md`), project skills (`keycloak-spi-scaffolder`, `ci-pr-manager`), and subagent blueprints.
 
 ### Changed

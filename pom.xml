@@ -48,6 +48,7 @@
         <module>extensions/authenticators/breached-password</module>
         <module>extensions/authenticators/age-identity-proofing</module>
         <module>extensions/authenticators/distributed-rate-limiter</module>
+        <module>extensions/authenticators/adaptive-risk</module>
     </modules>
 
     <dependencyManagement>
