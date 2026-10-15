@@ -41,20 +41,25 @@ public class FranceDocumentStrategy implements CountryDocumentStrategy {
     String keyStr = documentNumber.substring(13, 15);
 
     long baseNumber;
-    if (isCorsica) {
-      if (baseStr.contains("2A")) {
-        baseStr = baseStr.replace("2A", "20");
-        baseNumber = Long.parseLong(baseStr) - 1_000_000L;
+    int actualKey;
+    try {
+      if (isCorsica) {
+        if (baseStr.contains("2A")) {
+          baseStr = baseStr.replace("2A", "20");
+          baseNumber = Long.parseLong(baseStr) - 1_000_000L;
+        } else {
+          baseStr = baseStr.replace("2B", "20");
+          baseNumber = Long.parseLong(baseStr) - 2_000_000L;
+        }
       } else {
-        baseStr = baseStr.replace("2B", "20");
-        baseNumber = Long.parseLong(baseStr) - 2_000_000L;
+        baseNumber = Long.parseLong(baseStr);
       }
-    } else {
-      baseNumber = Long.parseLong(baseStr);
+      actualKey = Integer.parseInt(keyStr);
+    } catch (NumberFormatException e) {
+      return DocumentValidationResult.invalid("error-user-profile-national-id-invalid-format");
     }
 
     long expectedKey = 97 - (baseNumber % 97);
-    int actualKey = Integer.parseInt(keyStr);
 
     if (actualKey == expectedKey) {
       return DocumentValidationResult.valid("NIR");

@@ -37,9 +37,16 @@ public class UnitedStatesDocumentStrategy implements CountryDocumentStrategy {
     String groupStr = documentNumber.substring(3, 5);
     String serialStr = documentNumber.substring(5, 9);
 
-    int area = Integer.parseInt(areaStr);
-    int group = Integer.parseInt(groupStr);
-    int serial = Integer.parseInt(serialStr);
+    int area;
+    int group;
+    int serial;
+    try {
+      area = Integer.parseInt(areaStr);
+      group = Integer.parseInt(groupStr);
+      serial = Integer.parseInt(serialStr);
+    } catch (NumberFormatException e) {
+      return DocumentValidationResult.invalid("error-user-profile-national-id-invalid-format");
+    }
 
     if (area == 0 || area == 666 || area >= 900) {
       return DocumentValidationResult.invalid("error-user-profile-national-id-checksum");

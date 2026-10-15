@@ -59,7 +59,12 @@ public class SpainDocumentStrategy implements CountryDocumentStrategy {
   }
 
   private DocumentValidationResult validateDni(String dni) {
-    int number = Integer.parseInt(dni.substring(0, 8));
+    int number;
+    try {
+      number = Integer.parseInt(dni.substring(0, 8));
+    } catch (NumberFormatException e) {
+      return DocumentValidationResult.invalid("error-user-profile-national-id-invalid-format");
+    }
     char expectedLetter = DNI_CONTROL_LETTERS.charAt(number % 23);
     char actualLetter = dni.charAt(8);
 
@@ -83,7 +88,12 @@ public class SpainDocumentStrategy implements CountryDocumentStrategy {
       return DocumentValidationResult.invalid("error-user-profile-national-id-invalid-format");
     }
 
-    int number = Integer.parseInt(prefixNum + nie.substring(1, 8));
+    int number;
+    try {
+      number = Integer.parseInt(prefixNum + nie.substring(1, 8));
+    } catch (NumberFormatException e) {
+      return DocumentValidationResult.invalid("error-user-profile-national-id-invalid-format");
+    }
     char expectedLetter = DNI_CONTROL_LETTERS.charAt(number % 23);
     char actualLetter = nie.charAt(8);
 
