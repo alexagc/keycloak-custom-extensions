@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+@SuppressWarnings("unchecked")
 class PublicTrustProviderResolverTest {
 
     @Mock
@@ -76,7 +77,7 @@ class PublicTrustProviderResolverTest {
         URI jwksUri = URI.create("https://identity.gov.example/jwks.json");
         when(httpResponse.statusCode()).thenReturn(200);
         when(httpResponse.body()).thenReturn(testJwksJson);
-        when(httpClient.send(any(HttpRequest.class), any())).thenReturn(httpResponse);
+        doReturn(httpResponse).when(httpClient).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
 
         // First call: fetches from remote
         PublicKey key1 = resolver.resolvePublicKey(jwksUri, "key-2026-01", 3000, 60);
@@ -88,7 +89,7 @@ class PublicTrustProviderResolverTest {
         assertNotNull(key2);
         assertSame(key1, key2);
 
-        verify(httpClient, times(1)).send(any(HttpRequest.class), any());
+        verify(httpClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
     }
 
     @Test
@@ -96,7 +97,7 @@ class PublicTrustProviderResolverTest {
         URI jwksUri = URI.create("https://identity.gov.example/jwks.json");
         when(httpResponse.statusCode()).thenReturn(200);
         when(httpResponse.body()).thenReturn(testJwksJson);
-        when(httpClient.send(any(HttpRequest.class), any())).thenReturn(httpResponse);
+        doReturn(httpResponse).when(httpClient).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
 
         PublicKey key = resolver.resolvePublicKey(jwksUri, null, 3000, 60);
         assertNotNull(key);
@@ -107,7 +108,7 @@ class PublicTrustProviderResolverTest {
     void testResolvePublicKeyHttpErrorReturnsNull() throws Exception {
         URI jwksUri = URI.create("https://identity.gov.example/jwks.json");
         when(httpResponse.statusCode()).thenReturn(503);
-        when(httpClient.send(any(HttpRequest.class), any())).thenReturn(httpResponse);
+        doReturn(httpResponse).when(httpClient).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
 
         PublicKey key = resolver.resolvePublicKey(jwksUri, "key-2026-01", 3000, 60);
         assertNull(key);
@@ -116,7 +117,7 @@ class PublicTrustProviderResolverTest {
     @Test
     void testResolvePublicKeyNetworkIOExceptionReturnsNull() throws Exception {
         URI jwksUri = URI.create("https://identity.gov.example/jwks.json");
-        when(httpClient.send(any(HttpRequest.class), any())).thenThrow(new IOException("Connection timed out"));
+        doThrow(new IOException("Connection timed out")).when(httpClient).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
 
         PublicKey key = resolver.resolvePublicKey(jwksUri, "key-2026-01", 3000, 60);
         assertNull(key);
