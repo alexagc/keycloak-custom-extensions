@@ -127,6 +127,7 @@ public class HibpClient {
 
     private static String sha1Hex(String input) {
         try {
+            // HIBP k-Anonymity range API standard strictly requires SHA-1 prefix and suffix
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             byte[] digest = md.digest(input.getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().withUpperCase().formatHex(digest);

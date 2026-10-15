@@ -31,7 +31,7 @@ public class HibpPrefixCache {
         this.cache = new LinkedHashMap<>(16, 0.75f, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<String, CacheEntry> eldest) {
-                return size() > HibpPrefixCache.this.maxEntries;
+                return super.size() > HibpPrefixCache.this.maxEntries;
             }
         };
     }
