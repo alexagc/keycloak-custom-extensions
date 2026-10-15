@@ -43,6 +43,7 @@
     <modules>
         <module>extensions/event-listeners/webhook</module>
         <module>extensions/validators/user-profile-rules</module>
+        <module>extensions/authenticators/breached-password</module>
     </modules>
 
     <dependencyManagement>

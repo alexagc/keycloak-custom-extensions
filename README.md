@@ -21,8 +21,7 @@ This repository provides production-tested, clean, and decoupled extensions orga
 | Category | Extension | Keycloak SPI | Description | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **`event-listeners`** | [`webhook`](extensions/event-listeners/webhook/) | `EventListenerProvider` | Dispatches Keycloak audit and admin events asynchronously to configurable HTTP Webhooks. | 🟢 Ready |
-| **`validators`** | [`user-profile-rules`](extensions/validators/user-profile-rules/) | `ValidatorFactory` | Declarative User Profile rules: minimum age check, disposable email blocker, and global national ID validation. | 🟢 Ready |
-| **`authenticators`** | `breached-password` | `Authenticator` | Real-time breached password detector using HaveIBeenPwned k-Anonymity API (NIST SP 800-63B / PCI-DSS 4.0). | ⚪ Planned |
+| **`authenticators`** | [`breached-password`](extensions/authenticators/breached-password/) | `Authenticator` / `PasswordPolicy` | Real-time breached password detector using HaveIBeenPwned k-Anonymity API (NIST SP 800-63B / PCI-DSS 4.0 / DORA). | 🟢 Ready |
 | **`authenticators`** | `age-identity-proofing` | `Authenticator` | Privacy-preserving age verification challenge with public eID / eIDAS 2.0 / OpenID4VP gateways. | ⚪ Planned |
 | **`authenticators`** | `distributed-rate-limiter` | `Authenticator` | Cluster-wide anti-brute-force rate limiter on Redis Sliding Window Counter for Kubernetes multi-pod setups. | ⚪ Planned |
 | **`authenticators`** | `adaptive-risk` | `Authenticator` | Zero-Trust Impossible Travel velocity evaluator, IP reputation, and dynamic Step-Up MFA challenge. | ⚪ Planned |
