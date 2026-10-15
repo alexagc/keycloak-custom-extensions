@@ -42,6 +42,7 @@
 
     <modules>
         <module>extensions/event-listeners/webhook</module>
+        <module>extensions/validators/user-profile-rules</module>
     </modules>
 
     <dependencyManagement>
