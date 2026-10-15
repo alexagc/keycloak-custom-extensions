@@ -32,7 +32,7 @@
 
         <!-- Maven Plugins -->
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
-        <surefire-plugin.version>3.5.1</surefire-plugin.version>
+        <surefire-plugin.version>3.6.0</surefire-plugin.version>
         <failsafe-plugin.version>3.5.1</failsafe-plugin.version>
         <jar-plugin.version>3.4.2</jar-plugin.version>
         <shade-plugin.version>3.6.0</shade-plugin.version>
