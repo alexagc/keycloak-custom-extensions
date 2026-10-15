@@ -48,7 +48,7 @@ public class BreachedPasswordPolicyProviderFactory implements PasswordPolicyProv
     }
 
     @Override
-    public boolean isMultiplies() {
+    public boolean isMultiplSupported() {
         return false;
     }
 

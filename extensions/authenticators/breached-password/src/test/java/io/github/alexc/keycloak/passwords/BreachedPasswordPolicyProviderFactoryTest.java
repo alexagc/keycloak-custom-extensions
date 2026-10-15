@@ -23,7 +23,7 @@ class BreachedPasswordPolicyProviderFactoryTest {
         assertEquals("Reject Breached Passwords (HIBP)", factory.getDisplayName());
         assertEquals(PasswordPolicyProvider.INT_CONFIG_TYPE, factory.getConfigType());
         assertEquals("1", factory.getDefaultConfigValue());
-        assertFalse(factory.isMultiplies());
+        assertFalse(factory.isMultiplSupported());
 
         Config.Scope scope = mock(Config.Scope.class);
         assertDoesNotThrow(() -> factory.init(scope));
