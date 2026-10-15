@@ -27,12 +27,14 @@
         <jboss-logging.version>3.6.1.Final</jboss-logging.version>
         <auto-service.version>1.1.1</auto-service.version>
         <slf4j.version>2.0.16</slf4j.version>
+        <valkey-java.version>5.5.0</valkey-java.version>
 
         <!-- Maven Plugins -->
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <surefire-plugin.version>3.5.1</surefire-plugin.version>
         <failsafe-plugin.version>3.5.1</failsafe-plugin.version>
         <jar-plugin.version>3.4.2</jar-plugin.version>
+        <shade-plugin.version>3.6.0</shade-plugin.version>
         <spotless-plugin.version>2.44.3</spotless-plugin.version>
         <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
         <pitest-plugin.version>1.18.2</pitest-plugin.version>
@@ -45,6 +47,7 @@
         <module>extensions/validators/user-profile-rules</module>
         <module>extensions/authenticators/breached-password</module>
         <module>extensions/authenticators/age-identity-proofing</module>
+        <module>extensions/authenticators/distributed-rate-limiter</module>
     </modules>
 
     <dependencyManagement>
@@ -142,6 +145,17 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>io.valkey</groupId>
+                <artifactId>valkey-java</artifactId>
+                <version>${valkey-java.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -192,6 +206,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${jar-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${shade-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>com.diffplug.spotless</groupId>
