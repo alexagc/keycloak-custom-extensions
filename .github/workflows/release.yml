@@ -41,7 +41,7 @@ jobs:
       - name: Stage JAR files for release
         run: |
           mkdir -p release-assets
-          find extensions -name "*.jar" ! -name "*sources.jar" ! -name "*javadoc.jar" -exec cp {} release-assets/ \;
+          find extensions -name "*.jar" ! -name "*sources.jar" ! -name "*javadoc.jar" ! -name "original-*.jar" -exec cp {} release-assets/ \;
           cd release-assets
           sha256sum *.jar > checksums.sha256
           echo "Staged release artifacts and checksums:"
