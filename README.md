@@ -50,6 +50,9 @@ ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev"]
 ### 2. Kubernetes / Helm Chart
 Mount the `.jar` into `/opt/keycloak/providers` using an `initContainer` or a custom container image as shown above.
 
+> [!TIP]
+> For production deployment topologies, complete `docker-compose.yml` stacks, and Kubernetes Helm `values.yaml` configurations, see the **[Production Deployment Guide](docs/DEPLOYMENT.md)**.
+
 ---
 
 ## 🛠️ Development & Zero-Install Philosophy
@@ -64,6 +67,7 @@ See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for contribution workflows and de
 ---
 
 ## 📚 Documentation
+* [Production Deployment Guide](docs/DEPLOYMENT.md): Complete Docker Compose and Kubernetes Helm production deployment guides.
 * [Architecture & SPI Lifecycle](docs/ARCHITECTURE.md): Deep dive into Keycloak Quarkus SPI mechanics.
 * [Development Guide](docs/DEVELOPMENT.md): GitHub Flow, Codespaces, and testing.
 * [Contributing](CONTRIBUTING.md): Code of conduct and contribution guidelines.

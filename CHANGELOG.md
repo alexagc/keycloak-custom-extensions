@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.0.0] - 2026-10-15
 ### Added
 - Initial project foundation and Maven multi-module root POM.
 - Zero-install workflow guidelines and Dev Container for Codespaces.
@@ -67,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Bundled with `org.apache.kafka:kafka-clients` shaded with package relocation (`io.github.alexc.keycloak.events.kafka.shaded.kafka`) and `slf4j-api` excluded to avoid Quarkus classloader conflicts.
   - Comprehensive unit test suite (`TopicResolverTest`, `CredentialSanitizerTest`, `CloudEventsRecordMapperTest`, `BoundedRetryRingBufferTest`, `KafkaProducerManagerTest`, `KafkaEventListenerProviderTest`, `KafkaEventListenerProviderFactoryTest`) and Testcontainers E2E integration test (`KafkaEventListenerE2EIT`).
 - Antigravity workflow optimizations including modular directory rules (`extensions/AGENTS.md`), project skills (`keycloak-spi-scaffolder`, `ci-pr-manager`), and subagent blueprints.
+- Production Deployment Guide (`docs/DEPLOYMENT.md`) covering Docker Compose multi-container stack (Keycloak, Postgres, Valkey, Kafka KRaft) and Kubernetes Helm deployment with automated provider download, checksum verification, and HA clustering.
 
 ### Changed
 - Modernized GitHub Actions workflows to eliminate Node.js 20 deprecation warnings (`actions/checkout@v7`, `actions/setup-java@v6`, `github/codeql-action/*@v4`, `softprops/action-gh-release@v3`).
@@ -74,5 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Canonicalized Git author mappings via `.mailmap` to consolidate legacy initial scaffold commits under a single canonical identity.
+
+[Unreleased]: https://github.com/alexagc/keycloak-custom-extensions/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/alexagc/keycloak-custom-extensions/releases/tag/v1.0.0
 
 
