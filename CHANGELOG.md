@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `disposable-email`: In-memory blocker for disposable and throwaway email domains preloaded from embedded resource with zero network latency.
   - `national-id`: Multi-country identity document validator using the Strategy Pattern with official mathematical checksums for Spain (DNI, NIE, CIF mod 23), Italy (Codice Fiscale mod 26), France (NIR mod 97), Brazil (CPF mod 11), United States (SSN SSA ranges), and Germany (Steuer-ID ISO 7064 MOD 11, 10), supporting fixed country or dynamic user profile attribute resolution (`attribute:<field>`).
 - Comprehensive unit test suite (JUnit 5 + Mockito) with boundary condition and mutation testing coverage, and Testcontainers End-to-End integration test (`UserProfileRulesE2EIT`) against Keycloak 26.x.
+- Antigravity workflow optimizations including modular directory rules (`extensions/AGENTS.md`), project skills (`keycloak-spi-scaffolder`, `ci-pr-manager`), and subagent blueprints.
 
 ### Changed
 - Modernized GitHub Actions workflows to eliminate Node.js 20 deprecation warnings (`actions/checkout@v7`, `actions/setup-java@v6`, `github/codeql-action/*@v4`, `softprops/action-gh-release@v3`).
