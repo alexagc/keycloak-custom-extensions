@@ -26,6 +26,8 @@ desktop.ini
 ### Logs & Temp ###
 *.log
 scratch/
+.plan/
 ROADMAP*.md
 TODO*.md
 *.local.md
+
