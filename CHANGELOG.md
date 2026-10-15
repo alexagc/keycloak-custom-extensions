@@ -55,6 +55,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `RiskScoringEngine`: Normalized composite risk aggregator (0-100) setting standardized authentication and user session notes (`adaptive_risk_score`, `adaptive_risk_level`, `adaptive_risk_step_up`).
   - Responsive FreeMarker challenge UI template (`adaptive-risk-challenge.ftl`) with multi-language i18n support (English and Spanish).
   - Comprehensive unit test suite (`ImpossibleTravelCalculatorTest`, `IpReputationCheckerTest`, `DeviceFingerprintEvaluatorTest`, `GeoLocationResolverTest`, `RiskScoringEngineTest`, `AdaptiveRiskAuthenticatorTest`, `AdaptiveRiskAuthenticatorFactoryTest`) and Testcontainers E2E integration test (`AdaptiveRiskE2EIT`).
+- Enterprise Kafka Audit Streamer SPI (`extensions/event-listeners/kafka`) implementing asynchronous, non-blocking audit event streaming to Apache Kafka:
+  - `KafkaEventListenerProvider`: Asynchronous event listener translating user authentication and realm administration events into CloudEvents 1.0 JSON payloads.
+  - `KafkaEventListenerProviderFactory`: Singleton lifecycle manager with `@AutoService` registration, SPI configuration parsing, and graceful producer shutdown.
+  - `KafkaProducerManager`: Thread-safe Kafka producer manager with non-blocking dispatch (`max.block.ms = 500`) and background retry draining.
+  - `BoundedRetryRingBuffer`: Resilient, bounded in-memory buffer (5000 records capacity with FIFO drop) ensuring zero blocking and fail-open tolerance during broker degradation.
+  - `TopicResolver`: Dynamic realm routing supporting `{realm}` interpolation for multi-tenant topic isolation (e.g. `keycloak.events.{realm}` and `keycloak.admin-events.{realm}`).
+  - `CredentialSanitizer`: Automatic recursive masking (`******`) of sensitive credentials (passwords, tokens, client secrets, TOTP codes) in event details and admin JSON representations.
+  - `CloudEventsRecordMapper`: Standard CloudEvents 1.0 JSON serialization (`specversion: 1.0`, canonical types, ISO-8601 UTC timestamps).
+  - Configurable semantic partitioning strategy (`USER` by user ID for strict chronological order, `REALM` by realm ID, `NONE` for round-robin).
+  - Bundled with `org.apache.kafka:kafka-clients` shaded with package relocation (`io.github.alexc.keycloak.events.kafka.shaded.kafka`) and `slf4j-api` excluded to avoid Quarkus classloader conflicts.
+  - Comprehensive unit test suite (`TopicResolverTest`, `CredentialSanitizerTest`, `CloudEventsRecordMapperTest`, `BoundedRetryRingBufferTest`, `KafkaProducerManagerTest`, `KafkaEventListenerProviderTest`, `KafkaEventListenerProviderFactoryTest`) and Testcontainers E2E integration test (`KafkaEventListenerE2EIT`).
 - Antigravity workflow optimizations including modular directory rules (`extensions/AGENTS.md`), project skills (`keycloak-spi-scaffolder`, `ci-pr-manager`), and subagent blueprints.
 
 ### Changed
