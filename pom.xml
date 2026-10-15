@@ -21,7 +21,7 @@
         <keycloak.version>26.8.0</keycloak.version>
         <testcontainers.version>1.20.4</testcontainers.version>
         <testcontainers-keycloak.version>4.4.0</testcontainers-keycloak.version>
-        <mockserver.version>5.15.0</mockserver.version>
+        <mockserver.version>8.0.0</mockserver.version>
         <junit.jupiter.version>5.11.2</junit.jupiter.version>
         <mockito.version>5.14.2</mockito.version>
         <jboss-logging.version>3.6.1.Final</jboss-logging.version>
