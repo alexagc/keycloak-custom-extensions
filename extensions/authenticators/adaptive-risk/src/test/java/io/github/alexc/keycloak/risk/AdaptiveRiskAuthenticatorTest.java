@@ -82,8 +82,7 @@ class AdaptiveRiskAuthenticatorTest {
     when(httpRequest.getHttpHeaders()).thenReturn(httpHeaders);
     when(flowContext.form()).thenReturn(formsProvider);
     when(flowContext.getEvent()).thenReturn(event);
-    when(event.user(any())).thenReturn(event);
-    when(event.error(any())).thenReturn(event);
+    when(event.user(any(UserModel.class))).thenReturn(event);
     when(event.detail(anyString(), anyString())).thenReturn(event);
 
     when(formsProvider.setAttribute(anyString(), any())).thenReturn(formsProvider);
