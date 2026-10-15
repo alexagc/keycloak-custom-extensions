@@ -21,6 +21,8 @@ import org.keycloak.validate.ValidatorConfig;
 
 class NationalIdValidatorTest {
 
+  private static final ValidatorConfig EMPTY_CONFIG = new ValidatorConfig(Collections.emptyMap());
+
   private NationalIdValidatorProvider provider;
   private NationalIdValidatorProviderFactory factory;
 
@@ -160,7 +162,7 @@ class NationalIdValidatorTest {
   @DisplayName("Missing country configuration parameter emits missing country error")
   void testMissingCountryConfig() {
     ValidationContext context = new ValidationContext();
-    provider.validate("12345678Z", "national_id", context, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("12345678Z", "national_id", context, EMPTY_CONFIG);
 
     assertFalse(context.isValid());
     assertEquals(

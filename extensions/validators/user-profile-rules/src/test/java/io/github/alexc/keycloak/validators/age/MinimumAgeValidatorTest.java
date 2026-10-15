@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,8 @@ import org.keycloak.validate.ValidationResult;
 import org.keycloak.validate.ValidatorConfig;
 
 class MinimumAgeValidatorTest {
+
+  private static final ValidatorConfig EMPTY_CONFIG = new ValidatorConfig(Collections.emptyMap());
 
   private MinimumAgeValidatorProvider provider;
   private MinimumAgeValidatorProviderFactory factory;
@@ -41,7 +44,7 @@ class MinimumAgeValidatorTest {
     String dobStr = dob.format(DateTimeFormatter.ISO_LOCAL_DATE);
 
     ValidationContext context = new ValidationContext();
-    provider.validate(dobStr, "birthdate", context, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate(dobStr, "birthdate", context, EMPTY_CONFIG);
 
     assertTrue(context.isValid(), "Turning 18 today must satisfy minimum age 18");
   }
@@ -53,7 +56,7 @@ class MinimumAgeValidatorTest {
     String dobStr = dob.format(DateTimeFormatter.ISO_LOCAL_DATE);
 
     ValidationContext context = new ValidationContext();
-    provider.validate(dobStr, "birthdate", context, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate(dobStr, "birthdate", context, EMPTY_CONFIG);
 
     assertTrue(context.isValid());
   }
@@ -65,7 +68,7 @@ class MinimumAgeValidatorTest {
     String dobStr = dob.format(DateTimeFormatter.ISO_LOCAL_DATE);
 
     ValidationContext context = new ValidationContext();
-    provider.validate(dobStr, "birthdate", context, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate(dobStr, "birthdate", context, EMPTY_CONFIG);
 
     assertFalse(context.isValid(), "Turning 18 tomorrow must be rejected");
     assertEquals(1, context.getErrors().size());
@@ -79,7 +82,7 @@ class MinimumAgeValidatorTest {
     String dobStr = dob.format(DateTimeFormatter.ISO_LOCAL_DATE);
 
     ValidationContext context = new ValidationContext();
-    provider.validate(dobStr, "birthdate", context, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate(dobStr, "birthdate", context, EMPTY_CONFIG);
 
     assertFalse(context.isValid());
     assertEquals(MinimumAgeValidatorProvider.ERROR_MINIMUM_AGE, context.getErrors().iterator().next().getMessage());
@@ -127,7 +130,7 @@ class MinimumAgeValidatorTest {
   @DisplayName("Invalid date format or unparseable text must emit invalid date error")
   void testUnparseableDateEmitsError() {
     ValidationContext context = new ValidationContext();
-    provider.validate("not-a-date", "birthdate", context, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("not-a-date", "birthdate", context, EMPTY_CONFIG);
 
     assertFalse(context.isValid());
     assertEquals(MinimumAgeValidatorProvider.ERROR_INVALID_DATE, context.getErrors().iterator().next().getMessage());
@@ -137,15 +140,15 @@ class MinimumAgeValidatorTest {
   @DisplayName("Null, empty or blank strings must be ignored (handled by required validator)")
   void testNullOrEmptyIgnored() {
     ValidationContext ctxNull = new ValidationContext();
-    provider.validate(null, "birthdate", ctxNull, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate(null, "birthdate", ctxNull, EMPTY_CONFIG);
     assertTrue(ctxNull.isValid());
 
     ValidationContext ctxEmpty = new ValidationContext();
-    provider.validate("", "birthdate", ctxEmpty, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("", "birthdate", ctxEmpty, EMPTY_CONFIG);
     assertTrue(ctxEmpty.isValid());
 
     ValidationContext ctxBlank = new ValidationContext();
-    provider.validate("   ", "birthdate", ctxBlank, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("   ", "birthdate", ctxBlank, EMPTY_CONFIG);
     assertTrue(ctxBlank.isValid());
   }
 

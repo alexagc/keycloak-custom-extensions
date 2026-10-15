@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +16,8 @@ import org.keycloak.validate.ValidationContext;
 import org.keycloak.validate.ValidatorConfig;
 
 class DisposableEmailValidatorTest {
+
+  private static final ValidatorConfig EMPTY_CONFIG = new ValidatorConfig(Collections.emptyMap());
 
   private DisposableEmailValidatorProvider provider;
   private DisposableEmailValidatorProviderFactory factory;
@@ -50,7 +53,7 @@ class DisposableEmailValidatorTest {
   @DisplayName("Direct match on disposable domain must be rejected")
   void testDirectBlockedDomain() {
     ValidationContext context = new ValidationContext();
-    provider.validate("user@mailinator.com", "email", context, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("user@mailinator.com", "email", context, EMPTY_CONFIG);
 
     assertFalse(context.isValid());
     assertEquals(1, context.getErrors().size());
@@ -63,7 +66,7 @@ class DisposableEmailValidatorTest {
   @DisplayName("Subdomain of a blocked domain must be rejected by default")
   void testSubdomainBlockedByDefault() {
     ValidationContext context = new ValidationContext();
-    provider.validate("test@sub.mailinator.com", "email", context, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("test@sub.mailinator.com", "email", context, EMPTY_CONFIG);
 
     assertFalse(context.isValid(), "sub.mailinator.com must be blocked by default");
   }
@@ -85,15 +88,15 @@ class DisposableEmailValidatorTest {
   @DisplayName("Legitimate domain must be accepted")
   void testLegitimateDomainIsValid() {
     ValidationContext ctx1 = new ValidationContext();
-    provider.validate("alice@company.com", "email", ctx1, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("alice@company.com", "email", ctx1, EMPTY_CONFIG);
     assertTrue(ctx1.isValid());
 
     ValidationContext ctx2 = new ValidationContext();
-    provider.validate("bob@gmail.com", "email", ctx2, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("bob@gmail.com", "email", ctx2, EMPTY_CONFIG);
     assertTrue(ctx2.isValid());
 
     ValidationContext ctx3 = new ValidationContext();
-    provider.validate("dev@proton.me", "email", ctx3, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("dev@proton.me", "email", ctx3, EMPTY_CONFIG);
     assertTrue(ctx3.isValid());
   }
 
@@ -119,11 +122,11 @@ class DisposableEmailValidatorTest {
   @DisplayName("Email check must be case-insensitive")
   void testCaseInsensitiveMatching() {
     ValidationContext context = new ValidationContext();
-    provider.validate("User@MAILINATOR.COM", "email", context, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("User@MAILINATOR.COM", "email", context, EMPTY_CONFIG);
     assertFalse(context.isValid());
 
     ValidationContext contextSub = new ValidationContext();
-    provider.validate("Test@Sub.Temp-Mail.Org", "email", contextSub, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("Test@Sub.Temp-Mail.Org", "email", contextSub, EMPTY_CONFIG);
     assertFalse(contextSub.isValid());
   }
 
@@ -131,19 +134,19 @@ class DisposableEmailValidatorTest {
   @DisplayName("Malformed, null, or empty email values must be ignored")
   void testMalformedOrNullEmailIgnored() {
     ValidationContext ctxNull = new ValidationContext();
-    provider.validate(null, "email", ctxNull, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate(null, "email", ctxNull, EMPTY_CONFIG);
     assertTrue(ctxNull.isValid());
 
     ValidationContext ctxEmpty = new ValidationContext();
-    provider.validate("", "email", ctxEmpty, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("", "email", ctxEmpty, EMPTY_CONFIG);
     assertTrue(ctxEmpty.isValid());
 
     ValidationContext ctxNoAt = new ValidationContext();
-    provider.validate("plainaddress", "email", ctxNoAt, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("plainaddress", "email", ctxNoAt, EMPTY_CONFIG);
     assertTrue(ctxNoAt.isValid());
 
     ValidationContext ctxEmptyDomain = new ValidationContext();
-    provider.validate("user@", "email", ctxEmptyDomain, ValidatorConfig.EMPTY_CONFIG);
+    provider.validate("user@", "email", ctxEmptyDomain, EMPTY_CONFIG);
     assertTrue(ctxEmptyDomain.isValid());
   }
 
@@ -153,7 +156,7 @@ class DisposableEmailValidatorTest {
     assertNotNull(factory.getHelpText());
     assertNotNull(factory.getConfigProperties());
     assertEquals(2, factory.getConfigProperties().size());
-    assertTrue(factory.validateConfig(null, ValidatorConfig.EMPTY_CONFIG).isValid());
+    assertTrue(factory.validateConfig(null, EMPTY_CONFIG).isValid());
 
     factory.close();
     assertTrue(factory.getPreloadedBlockedDomains().isEmpty());
