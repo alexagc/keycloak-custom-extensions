@@ -26,7 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `minimum-age`: Legal majority / GDPR age verification with configurable `min-age` and `date-format`.
   - `disposable-email`: In-memory blocker for disposable and throwaway email domains preloaded from embedded resource with zero network latency.
   - `national-id`: Multi-country identity document validator using the Strategy Pattern with official mathematical checksums for Spain (DNI, NIE, CIF mod 23), Italy (Codice Fiscale mod 26), France (NIR mod 97), Brazil (CPF mod 11), United States (SSN SSA ranges), and Germany (Steuer-ID ISO 7064 MOD 11, 10), supporting fixed country or dynamic user profile attribute resolution (`attribute:<field>`).
-- Comprehensive unit test suite (JUnit 5 + Mockito) with boundary condition and mutation testing coverage, and Testcontainers End-to-End integration test (`UserProfileRulesE2EIT`) against Keycloak 26.x.
+- Breached Password Detector SPI (`extensions/authenticators/breached-password`) implementing HaveIBeenPwned k-Anonymity protection (NIST SP 800-63B, PCI-DSS v4.0, DORA):
+  - `BreachedPasswordAuthenticator`: Real-time compromised credential detection in Keycloak browser authentication flows with `strict` and `audit-only` modes.
+  - `BreachedPasswordPolicyProvider`: Preventative password policy checking in user registration, reset credentials, and profile management flows.
+  - `CheckBreachedPasswordAction`: Seamless required action enforcement (`UPDATE_PASSWORD`) without session termination.
+  - Native asynchronous Java 21 `HttpClient` with side-channel mitigation (`Add-Padding: true`), prefix LRU cache with TTL, and fail-open resilience.
+  - Comprehensive unit test suite (JUnit 5 + Mockito) and Testcontainers E2E integration test (`BreachedPasswordE2EIT`) against Keycloak 26.x and MockServer.
 - Antigravity workflow optimizations including modular directory rules (`extensions/AGENTS.md`), project skills (`keycloak-spi-scaffolder`, `ci-pr-manager`), and subagent blueprints.
 
 ### Changed
