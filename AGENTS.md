@@ -81,4 +81,15 @@ Any agent or developer modifying or adding code MUST maintain documentation inte
 ## 6. Task Tracking & State Management
 
 * **Private Task Tracking:** A local `ROADMAP.md` file (ignored by Git via `.gitignore`) maintains the granular progress checklist. Any agent in a new session must read `ROADMAP.md` to identify current progress and next items.
-* **Current Development Priority:** Phase 2 — `extensions/event-listeners/webhook` (Webhook Event Listener SPI).
+* **Current Development Priority:** Session 2 — `extensions/authenticators/breached-password` (Breached Password Detector Authenticator SPI).
+
+---
+
+## 7. Autonomous Session Kickoff Protocol (Zero-Slash Native Flow)
+
+When starting a new session or implementing a new extension:
+1. **Context & State Sync:** Read `ROADMAP.md` and the matching `.plan/<session>.md` to identify scope, requirements, and acceptance criteria.
+2. **Native Architectural Interview:** Proactively analyze critical design decisions, trade-offs, and fallbacks (e.g. fail-open vs. fail-close, timeout thresholds, error mappings). Ask clarifying questions to align with the developer before generating code.
+3. **Phased Plan Presentation:** Present a concise, phased implementation plan artifact before executing changes.
+4. **Autonomous Execution:** Orchestrate the workflow seamlessly using project skills (`keycloak-spi-scaffolder` for module setup, `keycloak-spi-reviewer` for audit, and `ci-pr-manager` for PR validation).
+
