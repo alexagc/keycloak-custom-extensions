@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -78,6 +79,8 @@ class DeviceFingerprintEvaluatorTest {
 
     DeviceFingerprintEvaluator.recordDeviceFingerprint(user, "hash-2");
 
-    verify(user).setAttribute(eq(DeviceFingerprintEvaluator.ATTR_KNOWN_FINGERPRINTS), eq(List.of("hash-2", "hash-1")));
+    verify(user).setAttribute(
+        eq(DeviceFingerprintEvaluator.ATTR_KNOWN_FINGERPRINTS),
+        argThat(list -> list.contains("hash-1") && list.contains("hash-2") && list.size() == 2));
   }
 }

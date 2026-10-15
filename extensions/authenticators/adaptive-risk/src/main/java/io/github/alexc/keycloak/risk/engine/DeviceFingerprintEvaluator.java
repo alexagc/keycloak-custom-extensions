@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -102,7 +102,7 @@ public final class DeviceFingerprintEvaluator {
       return;
     }
 
-    Set<String> known = new HashSet<>(getKnownFingerprints(user));
+    Set<String> known = new LinkedHashSet<>(getKnownFingerprints(user));
     known.add(fingerprint);
 
     // Limit stored fingerprints to prevent user attribute bloat
@@ -125,7 +125,7 @@ public final class DeviceFingerprintEvaluator {
       return Collections.emptySet();
     }
 
-    Set<String> set = new HashSet<>();
+    Set<String> set = new LinkedHashSet<>();
     for (String attr : attributes) {
       if (attr != null && !attr.isBlank()) {
         String[] parts = attr.split(",");
