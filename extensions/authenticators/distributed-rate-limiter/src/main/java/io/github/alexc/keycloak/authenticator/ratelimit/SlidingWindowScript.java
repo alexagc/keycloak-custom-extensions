@@ -1,10 +1,5 @@
 package io.github.alexc.keycloak.authenticator.ratelimit;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HexFormat;
-
 /**
  * Atomic sliding window rate limiting Lua script for Valkey and Redis.
  *
@@ -62,8 +57,6 @@ public final class SlidingWindowScript {
       end
       """;
 
-  private static final String SHA1 = computeSha1(LUA_SCRIPT);
-
   private SlidingWindowScript() {}
 
   /**
@@ -73,24 +66,5 @@ public final class SlidingWindowScript {
    */
   public static String getScript() {
     return LUA_SCRIPT;
-  }
-
-  /**
-   * Gets the precomputed SHA-1 hash for {@code EVALSHA}.
-   *
-   * @return lowercase SHA-1 hex digest
-   */
-  public static String getSha1() {
-    return SHA1;
-  }
-
-  private static String computeSha1(String text) {
-    try {
-      MessageDigest md = MessageDigest.getInstance("SHA-1");
-      byte[] digest = md.digest(text.getBytes(StandardCharsets.UTF_8));
-      return HexFormat.of().formatHex(digest);
-    } catch (NoSuchAlgorithmException e) {
-      throw new IllegalStateException("SHA-1 not available in JVM", e);
-    }
   }
 }

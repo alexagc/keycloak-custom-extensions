@@ -3,7 +3,6 @@ package io.github.alexc.keycloak.authenticator.ratelimit;
 import io.valkey.Jedis;
 import io.valkey.JedisPool;
 import io.valkey.JedisPoolConfig;
-import io.valkey.exceptions.JedisNoScriptException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Collections;
@@ -75,12 +74,7 @@ public class ValkeyRateLimiterClient implements RateLimiterClient {
             uniqueMember);
 
     try (Jedis jedis = pool.getResource()) {
-      Object result;
-      try {
-        result = jedis.evalsha(SlidingWindowScript.getSha1(), keys, args);
-      } catch (JedisNoScriptException e) {
-        result = jedis.eval(SlidingWindowScript.getScript(), keys, args);
-      }
+      Object result = jedis.eval(SlidingWindowScript.getScript(), keys, args);
 
       if (result instanceof List<?> list && list.size() >= 3) {
         long allowed = ((Number) list.get(0)).longValue();
