@@ -33,4 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modernized GitHub Actions workflows to eliminate Node.js 20 deprecation warnings (`actions/checkout@v7`, `actions/setup-java@v6`, `github/codeql-action/*@v4`, `softprops/action-gh-release@v3`).
 - Configured `-XX:+EnableDynamicAgentLoading` in Maven Surefire and Failsafe plugins to prevent Java 21 ByteBuddy dynamic agent loading warnings during test runs.
 
+### Fixed
+- Canonicalized Git author mappings via `.mailmap` to consolidate legacy initial scaffold commits under a single canonical identity.
+
 
