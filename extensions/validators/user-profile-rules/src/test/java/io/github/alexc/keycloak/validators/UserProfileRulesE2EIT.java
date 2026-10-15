@@ -15,10 +15,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.RealmRepresentation;
-import org.keycloak.representations.idm.UPAttributePermissionsRepresentation;
-import org.keycloak.representations.idm.UPAttributeRepresentation;
-import org.keycloak.representations.idm.UPConfig;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.representations.userprofile.config.UPAttribute;
+import org.keycloak.representations.userprofile.config.UPAttributePermissions;
+import org.keycloak.representations.userprofile.config.UPConfig;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -80,26 +80,30 @@ class UserProfileRulesE2EIT {
         upConfig = new UPConfig();
       }
 
+      UPAttributePermissions adminPermissions = new UPAttributePermissions();
+      adminPermissions.setView(Collections.singleton("admin"));
+      adminPermissions.setEdit(Collections.singleton("admin"));
+
       // 1. Configure 'birthdate' attribute with 'minimum-age' validator
-      UPAttributeRepresentation birthdateAttr = new UPAttributeRepresentation();
+      UPAttribute birthdateAttr = new UPAttribute();
       birthdateAttr.setName("birthdate");
-      birthdateAttr.setPermissions(new UPAttributePermissionsRepresentation(Collections.singleton("admin"), Collections.singleton("admin")));
+      birthdateAttr.setPermissions(adminPermissions);
       Map<String, Map<String, Object>> birthdateValidators = new HashMap<>();
       birthdateValidators.put("minimum-age", Collections.singletonMap("min-age", 18));
       birthdateAttr.setValidations(birthdateValidators);
 
       // 2. Configure 'email' attribute adding 'disposable-email' validator
-      UPAttributeRepresentation emailAttr = new UPAttributeRepresentation();
+      UPAttribute emailAttr = new UPAttribute();
       emailAttr.setName("email");
-      emailAttr.setPermissions(new UPAttributePermissionsRepresentation(Collections.singleton("admin"), Collections.singleton("admin")));
+      emailAttr.setPermissions(adminPermissions);
       Map<String, Map<String, Object>> emailValidators = new HashMap<>();
       emailValidators.put("disposable-email", Collections.singletonMap("block-subdomains", true));
       emailAttr.setValidations(emailValidators);
 
       // 3. Configure 'dni' attribute with 'national-id' validator (Spain ES)
-      UPAttributeRepresentation dniAttr = new UPAttributeRepresentation();
+      UPAttribute dniAttr = new UPAttribute();
       dniAttr.setName("dni");
-      dniAttr.setPermissions(new UPAttributePermissionsRepresentation(Collections.singleton("admin"), Collections.singleton("admin")));
+      dniAttr.setPermissions(adminPermissions);
       Map<String, Map<String, Object>> dniValidators = new HashMap<>();
       Map<String, Object> nationalIdConfig = new HashMap<>();
       nationalIdConfig.put("country", "ES");
