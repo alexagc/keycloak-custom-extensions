@@ -44,6 +44,7 @@
         <module>extensions/event-listeners/webhook</module>
         <module>extensions/validators/user-profile-rules</module>
         <module>extensions/authenticators/breached-password</module>
+        <module>extensions/authenticators/age-identity-proofing</module>
     </modules>
 
     <dependencyManagement>

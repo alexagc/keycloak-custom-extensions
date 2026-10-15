@@ -32,6 +32,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `CheckBreachedPasswordAction`: Seamless required action enforcement (`UPDATE_PASSWORD`) without session termination.
   - Native asynchronous Java 21 `HttpClient` with side-channel mitigation (`Add-Padding: true`), prefix LRU cache with TTL, and fail-open resilience.
   - Comprehensive unit test suite (JUnit 5 + Mockito) and Testcontainers E2E integration test (`BreachedPasswordE2EIT`) against Keycloak 26.x and MockServer.
+- Age & Identity Proofing SPI (`extensions/authenticators/age-identity-proofing`) implementing eIDAS 2.0 / OpenID4VP / eID gateway verification with Zero-PII privacy architecture:
+  - `AgeProofingAuthenticator`: Authentication flow step supporting conditional step-up authentication with responsive FreeMarker challenge UI (OpenID4VP QR code and public eID gateway redirect).
+  - `AgeProofingRequiredAction`: Post-login onboarding and account compliance action with O(1) trigger evaluation.
+  - Zero-PII storage policy: Stores only SHA-256 evidence digest (`age_proof_hash`), issuer identifier (`age_proof_issuer`), and timestamp (`age_verified_at`) in compliance with GDPR Articles 5 and 25.
+  - Native cryptographic validation for JWS assertions (RS256/384/512, ES256/384/512) and in-memory JWKS public key cache using Java 21 `HttpClient`.
+  - Comprehensive unit test suite (`PublicTrustProviderResolverTest`, `VerifiablePresentationValidatorTest`, `AgeProofingAuthenticatorTest`, `AgeProofingRequiredActionTest`) and Testcontainers E2E integration test (`AgeProofingE2EIT`).
 - Antigravity workflow optimizations including modular directory rules (`extensions/AGENTS.md`), project skills (`keycloak-spi-scaffolder`, `ci-pr-manager`), and subagent blueprints.
 
 ### Changed
