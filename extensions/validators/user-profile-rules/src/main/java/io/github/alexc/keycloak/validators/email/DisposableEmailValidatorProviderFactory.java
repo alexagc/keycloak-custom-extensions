@@ -117,7 +117,7 @@ public class DisposableEmailValidatorProviderFactory
 
   @Override
   public ValidationResult validateConfig(KeycloakSession session, ValidatorConfig config) {
-    return new ValidationResult();
+    return new ValidationResult(Collections.emptySet());
   }
 
   @Override

@@ -99,7 +99,7 @@ public class NationalIdValidatorProviderFactory implements ValidatorFactory, Con
   @Override
   public ValidationResult validateConfig(KeycloakSession session, ValidatorConfig config) {
     if (config == null) {
-      return new ValidationResult();
+      return new ValidationResult(Collections.emptySet());
     }
 
     Set<ValidationError> errors = new HashSet<>();
