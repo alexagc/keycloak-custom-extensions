@@ -36,7 +36,7 @@
         <failsafe-plugin.version>3.5.1</failsafe-plugin.version>
         <jar-plugin.version>3.4.2</jar-plugin.version>
         <shade-plugin.version>3.6.0</shade-plugin.version>
-        <spotless-plugin.version>2.44.3</spotless-plugin.version>
+        <spotless-plugin.version>3.10.4</spotless-plugin.version>
         <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
         <pitest-plugin.version>1.18.2</pitest-plugin.version>
         <pitest-junit5.version>1.2.2</pitest-junit5.version>
