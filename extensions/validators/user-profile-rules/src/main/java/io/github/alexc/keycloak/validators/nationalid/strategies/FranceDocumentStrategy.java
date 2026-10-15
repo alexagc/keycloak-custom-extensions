@@ -17,7 +17,7 @@ public class FranceDocumentStrategy implements CountryDocumentStrategy {
 
   private static final Pattern STANDARD_NIR_PATTERN = Pattern.compile("^[12][0-9]{14}$");
   private static final Pattern CORSICA_NIR_PATTERN =
-      Pattern.compile("^[12][0-9]{5}(2A|2B)[0-9]{5}[0-9]{2}$");
+      Pattern.compile("^[12][0-9]{4}(2A|2B)[0-9]{6}[0-9]{2}$");
 
   @Override
   public String getCountryCode() {

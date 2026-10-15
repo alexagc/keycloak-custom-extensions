@@ -41,6 +41,14 @@ public class NationalIdValidatorProvider extends AbstractStringValidator {
   }
 
   @Override
+  protected boolean skipValidation(Object value, ValidatorConfig config) {
+    if (value == null || (value instanceof String && ((String) value).trim().isEmpty())) {
+      return true;
+    }
+    return super.skipValidation(value, config);
+  }
+
+  @Override
   protected void doValidate(
       String value, String inputHint, ValidationContext context, ValidatorConfig config) {
     if (value == null || value.trim().isEmpty()) {

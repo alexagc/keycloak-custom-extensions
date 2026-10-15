@@ -51,8 +51,8 @@ class SpainDocumentStrategyTest {
   @Test
   @DisplayName("Valid NIE documents (X, Y, Z prefixes) must pass validation")
   void testValidNie() {
-    // X -> 0: 01234567 % 23 = 19 ('H')
-    DocumentValidationResult resX = strategy.validate("X1234567H", true);
+    // X -> 0: 01234567 % 23 = 19 ('L')
+    DocumentValidationResult resX = strategy.validate("X1234567L", true);
     assertTrue(resX.valid());
     assertEquals("NIE", resX.documentType());
 

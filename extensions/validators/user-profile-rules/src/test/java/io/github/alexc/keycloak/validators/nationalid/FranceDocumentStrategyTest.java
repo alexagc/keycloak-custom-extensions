@@ -46,8 +46,8 @@ class FranceDocumentStrategyTest {
     assertTrue(res2A.valid());
     assertEquals("NIR", res2A.documentType());
 
-    // 2B Haute-Corse
-    DocumentValidationResult res2B = strategy.validate("185012B00100167", true);
+    // 2B Haute-Corse (97 - (1850118001001 % 97) = 97 - 60 = 37)
+    DocumentValidationResult res2B = strategy.validate("185012B00100137", true);
     assertTrue(res2B.valid());
     assertEquals("NIR", res2B.documentType());
   }

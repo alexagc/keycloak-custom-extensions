@@ -27,7 +27,7 @@ class ItalyDocumentStrategyTest {
   @Test
   @DisplayName("Valid Italian Codice Fiscale must pass validation")
   void testValidCodiceFiscale() {
-    DocumentValidationResult res1 = strategy.validate("RSSMRA85A01H501F", true);
+    DocumentValidationResult res1 = strategy.validate("RSSMRA85A01H501Z", true);
     assertTrue(res1.valid());
     assertEquals("Codice Fiscale", res1.documentType());
 
@@ -39,7 +39,7 @@ class ItalyDocumentStrategyTest {
   @Test
   @DisplayName("Invalid control character must fail with checksum error")
   void testInvalidControlCharChecksum() {
-    DocumentValidationResult res = strategy.validate("RSSMRA85A01H501Z", true);
+    DocumentValidationResult res = strategy.validate("RSSMRA85A01H501F", true);
     assertFalse(res.valid());
     assertEquals("error-user-profile-national-id-checksum", res.errorMessageKey());
   }
