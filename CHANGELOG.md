@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Configured sequential Dependabot grouping rules in `.github/dependabot.yml` (`maven-plugins`, `test-dependencies`, `keycloak-runtime`, and `other-dependencies` catch-all) preventing unmanaged branch proliferation.
+- Established architectural standard in `AGENTS.md` (Section 3.4) requiring explicit Dependabot group classification when adding or updating dependencies.
+
+### Changed
+- Consolidated verified weekly dependency updates:
+  - `actions/dependency-review-action` bumped from `v4` to `v5`.
+  - `maven-surefire-plugin` and `maven-failsafe-plugin` bumped from `3.5.1` to `3.6.0`.
+  - `maven-javadoc-plugin` bumped from `3.11.2` to `3.12.0`.
+  - `jacoco-maven-plugin` bumped from `0.8.12` to `0.8.15`.
+  - `pitest-junit5-plugin` bumped from `1.2.2` to `1.2.3`.
+  - `spotless-maven-plugin` bumped from `2.44.3` to `3.10.4`.
+  - `jboss-logging` bumped from `3.6.1.Final` to `3.6.3.Final`.
+  - `junit-jupiter` bumped from `5.11.2` to `6.1.3`.
+  - `mockserver-client-java` bumped from `5.15.0` to `8.0.0`.
+
 ### Fixed
 - Fixed Mermaid diagram syntax in `docs/ARCHITECTURE.md` and upgraded it with the complete Keycloak 26.x Quarkus SPI lifecycle architecture.
 
