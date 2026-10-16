@@ -26,7 +26,7 @@
         <mockito.version>5.24.0</mockito.version>
         <jboss-logging.version>3.6.3.Final</jboss-logging.version>
         <auto-service.version>1.1.1</auto-service.version>
-        <slf4j.version>2.0.16</slf4j.version>
+        <slf4j.version>2.0.20</slf4j.version>
         <valkey-java.version>5.5.0</valkey-java.version>
         <kafka-clients.version>4.4.0</kafka-clients.version>
 
@@ -239,7 +239,7 @@
                     <configuration>
                         <java>
                             <googleJavaFormat>
-                                <version>1.25.0</version>
+                                <version>1.37.0</version>
                                 <style>GOOGLE</style>
                             </googleJavaFormat>
                         </java>

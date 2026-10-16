@@ -26,7 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Tag("e2e")
 class AdaptiveRiskE2EIT {
 
-  private static final String KEYCLOAK_IMAGE = "quay.io/keycloak/keycloak:26.8.0";
+  private static final String KEYCLOAK_IMAGE = "quay.io/keycloak/keycloak:26.8.1";
 
   @BeforeAll
   static void checkDockerEnvironment() {

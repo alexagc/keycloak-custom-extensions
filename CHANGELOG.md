@@ -10,7 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Established architectural standard in `AGENTS.md` (Section 3.4) requiring explicit Dependabot group classification when adding or updating dependencies.
 
 ### Changed
-- Consolidated verified weekly dependency updates:
+- Consolidated full project dependency and plugin updates to latest available versions:
+  - `keycloak` runtime artifacts bumped from `26.8.0` to `26.8.1` (including SMTP StartTLS security patch CVE-2026-107121).
+  - `org.apache.kafka:kafka-clients` bumped from `3.9.2` to `4.4.0` in shaded event listener module.
+  - `testcontainers` bumped from `1.20.4` to `1.21.4` (latest in 1.x line ensuring binary compatibility with `testcontainers-keycloak:4.4.0`).
+  - `org.mockito:mockito-core` and `mockito-junit-jupiter` bumped from `5.14.2` to `5.24.0`.
+  - `slf4j` bumped from `2.0.16` to `2.0.20`.
+  - `maven-compiler-plugin` bumped from `3.13.0` to `3.16.0`.
+  - `maven-jar-plugin` bumped from `3.4.2` to `3.5.1`.
+  - `maven-shade-plugin` bumped from `3.6.0` to `3.6.2`.
+  - `pitest-maven` bumped from `1.18.2` to `1.30.0`.
+  - `google-java-format` code formatting engine bumped from `1.25.0` to `1.37.0`.
+  - Updated Keycloak container image in all E2E Testcontainers integration tests to `quay.io/keycloak/keycloak:26.8.1`.
   - `actions/dependency-review-action` bumped from `v4` to `v5`.
   - `maven-surefire-plugin` and `maven-failsafe-plugin` bumped from `3.5.1` to `3.6.0`.
   - `maven-javadoc-plugin` bumped from `3.11.2` to `3.12.0`.

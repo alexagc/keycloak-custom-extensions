@@ -34,7 +34,7 @@ import static org.mockserver.model.HttpRequest.request;
 @Tag("e2e")
 class WebhookEventListenerE2EIT {
 
-    private static final String KEYCLOAK_IMAGE = "quay.io/keycloak/keycloak:26.8.0";
+    private static final String KEYCLOAK_IMAGE = "quay.io/keycloak/keycloak:26.8.1";
     private static final DockerImageName MOCKSERVER_IMAGE = DockerImageName.parse("mockserver/mockserver:5.15.0");
 
     @BeforeAll
