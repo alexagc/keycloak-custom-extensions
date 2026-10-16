@@ -45,6 +45,7 @@ Every SPI factory implementation **must** be annotated with `@AutoService(<Fully
 ### 3.4. Dependency Constraints
 * All Keycloak dependencies (`keycloak-core`, `keycloak-server-spi`, etc.) must have `<scope>provided</scope>` because Keycloak provides them at runtime.
 * Avoid embedding heavy third-party libraries into extension JARs to prevent classloader conflicts with Quarkus. Prefer Java standard library APIs.
+* **Dependabot Group Classification:** Whenever adding or updating an external library, test dependency, or Maven plugin in any `pom.xml`, verify `.github/dependabot.yml`. Ensure its package pattern is explicitly registered in the appropriate group (`maven-plugins`, `test-dependencies`, `keycloak-runtime`) rather than defaulting to the `other-dependencies` catch-all.
 
 ---
 
@@ -55,6 +56,7 @@ Every SPI factory implementation **must** be annotated with `@AutoService(<Fully
    * `feat/<name>`: For new SPIs or enhancements.
    * `fix/<name>`: For bug fixes.
    * `docs/<name>`: For documentation updates.
+   * `chore/<name>`: For maintenance, dependency updates, and configuration tasks.
 2. **Pull Requests:**
    * Every PR triggers `.github/workflows/ci.yml`.
    * All CI checks must pass before merging.

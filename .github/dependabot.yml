@@ -1,6 +1,8 @@
 version: 2
 updates:
-  # Maintain dependencies for Maven root and multi-modules
+  # ===========================================================================
+  # 1. Maintain dependencies for Maven root and multi-modules
+  # ===========================================================================
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
@@ -14,8 +16,44 @@ updates:
       - "java"
     commit-message:
       prefix: "chore(deps)"
+    # NOTE: Dependabot evaluates groups sequentially top-to-bottom (first match wins).
+    # When introducing any new dependency in pom.xml, classify it into the appropriate
+    # group below rather than relying on the fallback 'other-dependencies' group.
+    groups:
+      # Build tooling, reporting, and Maven plugins (Zero runtime impact)
+      maven-plugins:
+        patterns:
+          - "*plugin*"
+          - "org.apache.maven.plugins:*"
+          - "com.diffplug.spotless:*"
+          - "org.jacoco:*"
+          - "org.pitest:*"
 
-  # Maintain dependencies for GitHub Actions
+      # Testing frameworks, mock libraries, and testcontainers (Test scope only)
+      test-dependencies:
+        patterns:
+          - "org.junit.jupiter:*"
+          - "org.mockito:*"
+          - "org.testcontainers:*"
+          - "com.github.dasniko:*"
+          - "org.mock-server:*"
+
+      # Core Keycloak SPI dependencies and Quarkus runtime provided libraries
+      keycloak-runtime:
+        patterns:
+          - "org.keycloak:*"
+          - "org.jboss.logging:*"
+          - "com.google.auto.service:*"
+
+      # Safety Net (Catch-All): Captures existing extension libraries (Valkey, Kafka, SLF4J)
+      # and any unclassified new dependency to prevent individual branch proliferation.
+      other-dependencies:
+        patterns:
+          - "*"
+
+  # ===========================================================================
+  # 2. Maintain dependencies for GitHub Actions
+  # ===========================================================================
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -23,9 +61,14 @@ updates:
       day: "monday"
       time: "06:00"
       timezone: "Europe/Madrid"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
       - "ci"
     commit-message:
       prefix: "ci(deps)"
+    groups:
+      # Consolidates all GitHub Actions workflow updates into a single PR
+      github-actions:
+        patterns:
+          - "*"
