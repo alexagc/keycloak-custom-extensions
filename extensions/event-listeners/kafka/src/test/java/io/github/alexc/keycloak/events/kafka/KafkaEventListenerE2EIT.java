@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("e2e")
 class KafkaEventListenerE2EIT {
 
-    private static final String KEYCLOAK_IMAGE = "quay.io/keycloak/keycloak:26.8.0";
+    private static final String KEYCLOAK_IMAGE = "quay.io/keycloak/keycloak:26.8.1";
     private static final DockerImageName KAFKA_IMAGE = DockerImageName.parse("apache/kafka:3.8.0");
 
     @BeforeAll
