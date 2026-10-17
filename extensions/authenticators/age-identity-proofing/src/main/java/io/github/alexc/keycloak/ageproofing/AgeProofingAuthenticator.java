@@ -85,7 +85,7 @@ public class AgeProofingAuthenticator implements Authenticator {
                 ? context.getAuthenticationSession().getAuthNote(AUTH_NOTE_NONCE)
                 : null;
         VerificationEvidence evidence = validator.validate(rawToken, config, expectedNonce);
-        if (evidence.success()) {
+        if (evidence != null && evidence.success()) {
             user.setSingleAttribute(ATTR_AGE_VERIFIED, "true");
             user.setSingleAttribute(ATTR_AGE_VERIFIED_AT, String.valueOf(evidence.verifiedAt()));
             if (evidence.proofHash() != null) {
@@ -99,14 +99,15 @@ public class AgeProofingAuthenticator implements Authenticator {
                     user.getUsername(), context.getRealm().getName(), evidence.issuer());
             context.success();
         } else {
-            LOG.warnv("Age verification rejected for user {0}: {1}", user.getUsername(), evidence.errorMessage());
+            String errorMessage = evidence != null ? evidence.errorMessage() : "Evidence validation returned no result";
+            LOG.warnv("Age verification rejected for user {0}: {1}", user.getUsername(), errorMessage);
             if (config.failOpen()) {
                 LOG.warn("Proceeding under fail-open policy despite assertion rejection");
                 context.success();
                 return;
             }
 
-            String errorKey = resolveErrorKey(evidence.errorMessage());
+            String errorKey = resolveErrorKey(errorMessage);
             renderChallenge(context, config, errorKey);
         }
     }

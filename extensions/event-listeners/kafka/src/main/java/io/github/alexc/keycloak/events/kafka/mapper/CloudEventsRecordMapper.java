@@ -77,14 +77,6 @@ public final class CloudEventsRecordMapper {
      * @return CloudEvents 1.0 JSON string
      * @throws IOException if serialization fails
      */
-    /**
-     * Converts a Keycloak {@link AdminEvent} into a CloudEvents 1.0 JSON string.
-     *
-     * @param event     administrative event
-     * @param realmName human-readable realm name
-     * @return CloudEvents 1.0 JSON string
-     * @throws IOException if serialization fails
-     */
     public static String toAdminCloudEvent(AdminEvent event, String realmName) throws IOException {
         return toAdminCloudEvent(event, realmName, true);
     }
