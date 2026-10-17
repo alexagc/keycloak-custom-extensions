@@ -101,17 +101,15 @@ public class DisposableEmailValidatorProvider extends AbstractStringValidator {
       return false;
     }
 
-    // Check if domain is a subdomain of any blocked domain (e.g. sub.mailinator.com -> mailinator.com)
-    for (String blocked : defaultBlockedDomains) {
-      if (domain.endsWith("." + blocked)) {
+    // Check parent domains in O(k) where k is the number of domain labels
+    // e.g. sub.deep.mailinator.com -> deep.mailinator.com, mailinator.com
+    int dotIndex = domain.indexOf('.');
+    while (dotIndex >= 0 && dotIndex < domain.length() - 1) {
+      String parentDomain = domain.substring(dotIndex + 1);
+      if (defaultBlockedDomains.contains(parentDomain) || customBlocked.contains(parentDomain)) {
         return true;
       }
-    }
-
-    for (String blocked : customBlocked) {
-      if (domain.endsWith("." + blocked)) {
-        return true;
-      }
+      dotIndex = domain.indexOf('.', dotIndex + 1);
     }
 
     return false;

@@ -134,7 +134,7 @@ class AgeProofingAuthenticatorTest {
         formParams.putSingle("vp_token", "signed-valid-vp-token");
         when(httpRequest.getDecodedFormParameters()).thenReturn(formParams);
 
-        when(validator.validate(eq("signed-valid-vp-token"), any()))
+        when(validator.validate(eq("signed-valid-vp-token"), any(), any()))
                 .thenReturn(VerificationEvidence.successful("hash-sha256-test", "https://clave.gob.es"));
 
         authenticator.action(context);
@@ -146,12 +146,28 @@ class AgeProofingAuthenticatorTest {
     }
 
     @Test
+    void testActionValidVpTokenWithExpectedNonce() {
+        when(authSession.getAuthNote(AgeProofingAuthenticator.AUTH_NOTE_NONCE)).thenReturn("test-nonce-123");
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<>();
+        formParams.putSingle("vp_token", "signed-valid-vp-token");
+        when(httpRequest.getDecodedFormParameters()).thenReturn(formParams);
+
+        when(validator.validate(eq("signed-valid-vp-token"), any(), eq("test-nonce-123")))
+                .thenReturn(VerificationEvidence.successful("hash-sha256-test", "https://clave.gob.es"));
+
+        authenticator.action(context);
+
+        verify(validator).validate(eq("signed-valid-vp-token"), any(), eq("test-nonce-123"));
+        verify(context).success();
+    }
+
+    @Test
     void testActionInvalidTokenFails() {
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<>();
         formParams.putSingle("vp_token", "invalid-token");
         when(httpRequest.getDecodedFormParameters()).thenReturn(formParams);
 
-        when(validator.validate(eq("invalid-token"), any()))
+        when(validator.validate(eq("invalid-token"), any(), any()))
                 .thenReturn(VerificationEvidence.failed("Cryptographic signature verification failed"));
 
         authenticator.action(context);

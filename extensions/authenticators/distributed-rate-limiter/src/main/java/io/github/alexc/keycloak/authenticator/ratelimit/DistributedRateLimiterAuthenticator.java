@@ -129,23 +129,40 @@ public class DistributedRateLimiterAuthenticator implements Authenticator {
     if (context == null) {
       return "127.0.0.1";
     }
+
+    if (context.getHttpRequest() != null && context.getHttpRequest().getHttpHeaders() != null) {
+      var headers = context.getHttpRequest().getHttpHeaders();
+      String cfIp = headers.getHeaderString("CF-Connecting-IP");
+      if (isValidIp(cfIp)) {
+        return cfIp.trim();
+      }
+
+      String xRealIp = headers.getHeaderString("X-Real-IP");
+      if (isValidIp(xRealIp)) {
+        return xRealIp.trim();
+      }
+
+      String xff = headers.getHeaderString("X-Forwarded-For");
+      if (xff != null && !xff.isBlank()) {
+        String[] parts = xff.split(",");
+        if (parts.length > 0 && isValidIp(parts[0])) {
+          return parts[0].trim();
+        }
+      }
+    }
+
     if (context.getConnection() != null) {
       String remoteAddr = context.getConnection().getRemoteAddr();
       if (remoteAddr != null && !remoteAddr.isBlank()) {
         return remoteAddr.trim();
       }
     }
-    if (context.getHttpRequest() != null && context.getHttpRequest().getHttpHeaders() != null) {
-      String xForwardedFor =
-          context.getHttpRequest().getHttpHeaders().getHeaderString("X-Forwarded-For");
-      if (xForwardedFor != null && !xForwardedFor.isBlank()) {
-        String firstIp = xForwardedFor.split(",")[0].trim();
-        if (!firstIp.isBlank()) {
-          return firstIp;
-        }
-      }
-    }
+
     return "127.0.0.1";
+  }
+
+  private static boolean isValidIp(String ip) {
+    return ip != null && !ip.isBlank() && !ip.equalsIgnoreCase("unknown");
   }
 
   /**

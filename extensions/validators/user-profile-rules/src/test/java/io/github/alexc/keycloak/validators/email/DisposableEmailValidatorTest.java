@@ -69,6 +69,10 @@ class DisposableEmailValidatorTest {
     provider.validate("test@sub.mailinator.com", "email", context, EMPTY_CONFIG);
 
     assertFalse(context.isValid(), "sub.mailinator.com must be blocked by default");
+
+    ValidationContext deepContext = new ValidationContext();
+    provider.validate("test@deep.nested.sub.mailinator.com", "email", deepContext, EMPTY_CONFIG);
+    assertFalse(deepContext.isValid(), "deep.nested.sub.mailinator.com must be blocked by default");
   }
 
   @Test

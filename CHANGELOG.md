@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Configured sequential Dependabot grouping rules in `.github/dependabot.yml` (`maven-plugins`, `test-dependencies`, `keycloak-runtime`, and `other-dependencies` catch-all) preventing unmanaged branch proliferation.
 - Established architectural standard in `AGENTS.md` (Section 3.4) requiring explicit Dependabot group classification when adding or updating dependencies.
+- Credential sanitization utility (`CredentialSanitizer`) in `extensions/event-listeners/webhook` masking sensitive keys (`password`, `secret`, `token`, `totp`, etc.) in event details and JSON representations.
+- Cryptographic anti-replay nonce validation in `extensions/authenticators/age-identity-proofing`.
+- Shared singleton prefix cache (`HibpPrefixCache.getOrCreateShared`) unified across `BreachedPasswordAuthenticatorFactory` and `BreachedPasswordPolicyProviderFactory`.
 
 ### Changed
 - Consolidated full project dependency and plugin updates to latest available versions:
@@ -31,9 +34,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `jboss-logging` bumped from `3.6.1.Final` to `3.6.3.Final`.
   - `junit-jupiter` bumped from `5.11.2` to `6.1.3`.
   - `mockserver-client-java` bumped from `5.15.0` to `8.0.0`.
+- Optimized disposable email subdomain scanning in `extensions/validators/user-profile-rules` from linear scan $O(N)$ to $O(k)$ set lookup of parent domain labels.
+- Optimized `MinimumAgeValidatorProvider` to reuse `DateTimeFormatter.ISO_LOCAL_DATE` and cache custom formatters.
+- Modernized SHA-256 hex encoding in `age-identity-proofing` and `adaptive-risk` using Java 21 `HexFormat.of().formatHex(...)`.
+- Enforced graceful `HttpClient.close()` on provider factory shutdown across `webhook`, `breached-password`, and related factories.
 
 ### Fixed
 - Fixed Mermaid diagram syntax in `docs/ARCHITECTURE.md` and upgraded it with the complete Keycloak 26.x Quarkus SPI lifecycle architecture.
+- Fixed critical reverse proxy IP evaluation order in `extensions/authenticators/distributed-rate-limiter` (`resolveClientIp` prioritizing `CF-Connecting-IP`, `X-Real-IP`, `X-Forwarded-For` over socket connection remoteAddr), preventing global DoS in Kubernetes, Cloudflare, and NGINX deployments.
+- Fixed critical FIFO eviction bug in `extensions/authenticators/adaptive-risk` (`DeviceFingerprintEvaluator.recordDeviceFingerprint`), evicting oldest fingerprints from head rather than discarding newest devices when capacity exceeds 10.
+- Fixed representation exposure in `extensions/event-listeners/kafka`, respecting `includeRepresentation` flag in `CloudEventsRecordMapper.toAdminCloudEvent`.
 
 ## [1.0.0] - 2026-10-15
 ### Added

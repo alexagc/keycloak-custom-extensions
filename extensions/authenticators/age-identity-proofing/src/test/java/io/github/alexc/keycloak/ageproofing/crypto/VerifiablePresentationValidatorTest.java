@@ -288,4 +288,33 @@ class VerifiablePresentationValidatorTest {
         assertFalse(evidence.success());
         assertTrue(evidence.errorMessage().contains("Empty or blank"));
     }
+
+    @Test
+    void testNonceMatchingSuccess() throws Exception {
+        String header = """
+                {"alg":"RS256","kid":"rsa-key-1"}
+                """;
+        String payload = """
+                {"iss":"https://clave.gob.es","age_over_18":true,"nonce":"correct-nonce-123"}
+                """;
+        String token = createJws(header, payload, rsaKeyPair.getPrivate(), "RS256");
+
+        VerificationEvidence evidence = validator.validate(token, defaultConfig, "correct-nonce-123");
+        assertTrue(evidence.success());
+    }
+
+    @Test
+    void testNonceMismatchFailure() throws Exception {
+        String header = """
+                {"alg":"RS256","kid":"rsa-key-1"}
+                """;
+        String payload = """
+                {"iss":"https://clave.gob.es","age_over_18":true,"nonce":"stale-nonce-999"}
+                """;
+        String token = createJws(header, payload, rsaKeyPair.getPrivate(), "RS256");
+
+        VerificationEvidence evidence = validator.validate(token, defaultConfig, "expected-nonce-123");
+        assertFalse(evidence.success());
+        assertTrue(evidence.errorMessage().contains("nonce mismatch"));
+    }
 }

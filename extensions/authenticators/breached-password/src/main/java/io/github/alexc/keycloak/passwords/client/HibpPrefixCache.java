@@ -9,6 +9,8 @@ import java.util.Map;
  */
 public class HibpPrefixCache {
 
+    private static volatile HibpPrefixCache SHARED_INSTANCE;
+
     private final int maxEntries;
     private final long ttlMillis;
     private final Map<String, CacheEntry> cache;
@@ -16,6 +18,30 @@ public class HibpPrefixCache {
     private record CacheEntry(Map<String, Integer> suffixes, long expiresAtMillis) {
         boolean isExpired(long currentTimeMillis) {
             return currentTimeMillis > expiresAtMillis;
+        }
+    }
+
+    /**
+     * Retrieves or lazily creates a shared singleton instance of the prefix cache.
+     *
+     * @param maxEntries maximum number of prefixes stored
+     * @param ttlMinutes time to live for each entry in minutes
+     * @return shared HibpPrefixCache instance
+     */
+    public static synchronized HibpPrefixCache getOrCreateShared(int maxEntries, int ttlMinutes) {
+        if (SHARED_INSTANCE == null) {
+            SHARED_INSTANCE = new HibpPrefixCache(maxEntries, ttlMinutes);
+        }
+        return SHARED_INSTANCE;
+    }
+
+    /**
+     * Clears and resets the shared singleton cache instance.
+     */
+    public static synchronized void resetShared() {
+        if (SHARED_INSTANCE != null) {
+            SHARED_INSTANCE.clear();
+            SHARED_INSTANCE = null;
         }
     }
 

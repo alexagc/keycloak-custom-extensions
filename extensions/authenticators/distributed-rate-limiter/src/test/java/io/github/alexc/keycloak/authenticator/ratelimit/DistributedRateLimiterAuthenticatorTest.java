@@ -69,19 +69,24 @@ class DistributedRateLimiterAuthenticatorTest {
   }
 
   @Test
-  @DisplayName("resolveClientIp extracts remote address from connection")
+  @DisplayName("resolveClientIp extracts remote address from connection when no proxy headers present")
   void testResolveClientIpDirect() {
     assertEquals("192.168.1.100", DistributedRateLimiterAuthenticator.resolveClientIp(context));
   }
 
   @Test
-  @DisplayName("resolveClientIp extracts first IP from X-Forwarded-For header")
+  @DisplayName("resolveClientIp prioritizes proxy headers over connection remoteAddr")
   void testResolveClientIpForwarded() {
-    when(connection.getRemoteAddr()).thenReturn(null);
     when(httpHeaders.getHeaderString("X-Forwarded-For"))
         .thenReturn("203.0.113.195, 70.41.3.18, 150.172.238.178");
-
+    // Even when connection remoteAddr is present (proxy IP), X-Forwarded-For wins
     assertEquals("203.0.113.195", DistributedRateLimiterAuthenticator.resolveClientIp(context));
+
+    when(httpHeaders.getHeaderString("X-Real-IP")).thenReturn("198.51.100.42");
+    assertEquals("198.51.100.42", DistributedRateLimiterAuthenticator.resolveClientIp(context));
+
+    when(httpHeaders.getHeaderString("CF-Connecting-IP")).thenReturn("198.51.100.99");
+    assertEquals("198.51.100.99", DistributedRateLimiterAuthenticator.resolveClientIp(context));
   }
 
   @Test

@@ -21,6 +21,23 @@ public class MinimumAgeValidatorProvider extends AbstractStringValidator {
   public static final String ERROR_MINIMUM_AGE = "error-user-profile-minimum-age";
   public static final String ERROR_INVALID_DATE = "error-user-profile-minimum-age-invalid-date";
 
+  private static final java.util.Map<String, DateTimeFormatter> FORMATTER_CACHE =
+      new java.util.concurrent.ConcurrentHashMap<>();
+
+  private static DateTimeFormatter resolveFormatter(String pattern) {
+    if (pattern == null || pattern.isBlank()
+        || MinimumAgeValidatorProviderFactory.DEFAULT_DATE_FORMAT.equals(pattern)) {
+      return DateTimeFormatter.ISO_LOCAL_DATE;
+    }
+    return FORMATTER_CACHE.computeIfAbsent(pattern, p -> {
+      try {
+        return DateTimeFormatter.ofPattern(p);
+      } catch (IllegalArgumentException e) {
+        return DateTimeFormatter.ISO_LOCAL_DATE;
+      }
+    });
+  }
+
   @Override
   public String getId() {
     return MinimumAgeValidatorProviderFactory.ID;
@@ -56,13 +73,7 @@ public class MinimumAgeValidatorProvider extends AbstractStringValidator {
       }
     }
 
-    DateTimeFormatter formatter;
-    try {
-      formatter = DateTimeFormatter.ofPattern(dateFormat);
-    } catch (IllegalArgumentException e) {
-      formatter =
-          DateTimeFormatter.ofPattern(MinimumAgeValidatorProviderFactory.DEFAULT_DATE_FORMAT);
-    }
+    DateTimeFormatter formatter = resolveFormatter(dateFormat);
 
     LocalDate dob;
     try {

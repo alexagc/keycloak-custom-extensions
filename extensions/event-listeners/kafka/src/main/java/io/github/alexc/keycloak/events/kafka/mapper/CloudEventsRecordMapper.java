@@ -78,6 +78,19 @@ public final class CloudEventsRecordMapper {
      * @throws IOException if serialization fails
      */
     public static String toAdminCloudEvent(AdminEvent event, String realmName) throws IOException {
+        return toAdminCloudEvent(event, realmName, true);
+    }
+
+    /**
+     * Converts a Keycloak {@link AdminEvent} into a CloudEvents 1.0 JSON string with optional representation.
+     *
+     * @param event                 administrative event
+     * @param realmName             human-readable realm name
+     * @param includeRepresentation whether to include the sanitized entity representation
+     * @return CloudEvents 1.0 JSON string
+     * @throws IOException if serialization fails
+     */
+    public static String toAdminCloudEvent(AdminEvent event, String realmName, boolean includeRepresentation) throws IOException {
         if (event == null) {
             throw new IllegalArgumentException("AdminEvent cannot be null");
         }
@@ -106,7 +119,9 @@ public final class CloudEventsRecordMapper {
         data.put("resourceType", event.getResourceType() != null ? event.getResourceType().name() : null);
         data.put("resourcePath", event.getResourcePath());
         data.put("error", event.getError());
-        data.put("representation", CredentialSanitizer.sanitizeRepresentation(event.getRepresentation()));
+        data.put("representation", includeRepresentation
+                ? CredentialSanitizer.sanitizeRepresentation(event.getRepresentation())
+                : null);
 
         Map<String, Object> cloudEvent = new LinkedHashMap<>();
         cloudEvent.put("specversion", SPEC_VERSION);

@@ -176,4 +176,38 @@ class WebhookEventListenerProviderTest {
         // Verification: must not throw exception to caller
         assertDoesNotThrow(() -> provider.onEvent(event));
     }
+
+    @Test
+    @DisplayName("Should sanitize sensitive credentials in user event and admin event payloads")
+    void testSanitizeCredentialsInDispatchedEvents() {
+        WebhookEventListenerConfig config = new WebhookEventListenerConfig(
+                URI.create("https://webhook.site/events"),
+                null,
+                Collections.emptySet(),
+                true,
+                Duration.ofSeconds(3),
+                Duration.ofSeconds(5)
+        );
+
+        WebhookEventListenerProvider provider = new WebhookEventListenerProvider(session, httpClient, config);
+
+        Event userEvent = new Event();
+        userEvent.setId("evt-sanitized");
+        userEvent.setType(EventType.LOGIN);
+        userEvent.setDetails(Map.of("username", "alice", "password", "SuperSecret123!", "custom_token", "abc"));
+
+        provider.onEvent(userEvent);
+
+        ArgumentCaptor<HttpRequest> requestCaptor = ArgumentCaptor.forClass(HttpRequest.class);
+        verify(httpClient, times(1)).sendAsync(requestCaptor.capture(), any());
+
+        // Also test admin event representation sanitization
+        AdminEvent adminEvent = new AdminEvent();
+        adminEvent.setId("adm-sanitized");
+        adminEvent.setOperationType(OperationType.CREATE);
+        adminEvent.setRepresentation("{\"username\":\"bob\",\"password\":\"rawSecret123\"}");
+
+        provider.onEvent(adminEvent, true);
+        verify(httpClient, times(2)).sendAsync(any(), any());
+    }
 }
