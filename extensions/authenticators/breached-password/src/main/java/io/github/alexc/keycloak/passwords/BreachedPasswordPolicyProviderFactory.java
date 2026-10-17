@@ -60,7 +60,7 @@ public class BreachedPasswordPolicyProviderFactory implements PasswordPolicyProv
     @Override
     public void init(Config.Scope configScope) {
         this.config = BreachedPasswordConfig.fromScope(configScope);
-        this.cache = new HibpPrefixCache(config.cacheMaxEntries(), config.cacheTtlMinutes());
+        this.cache = HibpPrefixCache.getOrCreateShared(config.cacheMaxEntries(), config.cacheTtlMinutes());
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofMillis(config.apiTimeoutMs()))
                 .followRedirects(HttpClient.Redirect.NORMAL)
@@ -78,6 +78,9 @@ public class BreachedPasswordPolicyProviderFactory implements PasswordPolicyProv
 
     @Override
     public void close() {
+        if (httpClient != null) {
+            httpClient.close();
+        }
         if (cache != null) {
             cache.clear();
         }

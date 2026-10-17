@@ -61,7 +61,7 @@ public class KafkaEventListenerProvider implements EventListenerProvider {
             String realmName = resolveRealmName(event.getRealmId());
             String topic = TopicResolver.resolve(config.adminEventsTopicPattern(), realmName != null ? realmName : event.getRealmId());
             String messageKey = resolveAdminMessageKey(event);
-            String payload = CloudEventsRecordMapper.toAdminCloudEvent(event, realmName);
+            String payload = CloudEventsRecordMapper.toAdminCloudEvent(event, realmName, includeRepresentation);
 
             producerManager.sendAsync(topic, messageKey, payload);
         } catch (Exception e) {

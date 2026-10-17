@@ -52,7 +52,7 @@ public class WebhookEventListenerProvider implements EventListenerProvider {
                     event.getSessionId(),
                     event.getIpAddress(),
                     event.getError(),
-                    event.getDetails()
+                    CredentialSanitizer.sanitizeDetails(event.getDetails())
             );
 
             String jsonPayload = JsonSerialization.writeValueAsString(record);
@@ -71,7 +71,9 @@ public class WebhookEventListenerProvider implements EventListenerProvider {
 
         try {
             String realmName = resolveRealmName(adminEvent.getRealmId());
-            String representation = includeRepresentation ? adminEvent.getRepresentation() : null;
+            String representation = includeRepresentation
+                    ? CredentialSanitizer.sanitizeRepresentation(adminEvent.getRepresentation())
+                    : null;
 
             WebhookAdminEventRecord record = new WebhookAdminEventRecord(
                     adminEvent.getId(),

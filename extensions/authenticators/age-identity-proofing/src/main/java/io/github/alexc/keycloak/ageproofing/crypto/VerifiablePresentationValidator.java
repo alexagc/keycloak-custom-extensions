@@ -39,6 +39,18 @@ public class VerifiablePresentationValidator {
      * @return VerificationEvidence capturing success or detailed failure reason
      */
     public VerificationEvidence validate(String rawToken, AgeVerificationConfig config) {
+        return validate(rawToken, config, null);
+    }
+
+    /**
+     * Validates a raw JWS assertion token against the provided configuration and expected nonce.
+     *
+     * @param rawToken      raw JWT/JWS assertion token string
+     * @param config        effective AgeVerificationConfig
+     * @param expectedNonce expected cryptographic nonce from authentication session
+     * @return VerificationEvidence capturing success or detailed failure reason
+     */
+    public VerificationEvidence validate(String rawToken, AgeVerificationConfig config, String expectedNonce) {
         if (rawToken == null || rawToken.isBlank()) {
             return VerificationEvidence.failed("Empty or blank assertion token");
         }
@@ -93,6 +105,17 @@ public class VerifiablePresentationValidator {
         try {
             String content = jwsInput.readContentAsString();
             JsonNode root = JsonSerialization.readValue(content, JsonNode.class);
+
+            // Defensive anti-replay: verify nonce claim if present in token
+            String tokenNonce = resolveClaimString(root, "nonce");
+            if (tokenNonce == null && root.has("credentialSubject")) {
+                tokenNonce = resolveClaimString(root.get("credentialSubject"), "nonce");
+            }
+            if (tokenNonce != null && expectedNonce != null && !expectedNonce.isBlank()) {
+                if (!tokenNonce.trim().equals(expectedNonce.trim())) {
+                    return VerificationEvidence.failed("Assertion nonce mismatch / replay detected");
+                }
+            }
 
             String issuer = resolveClaimString(root, "iss");
             if (issuer == null || issuer.isBlank()) {
@@ -207,15 +230,7 @@ public class VerifiablePresentationValidator {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] digest = md.digest(input.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : digest) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-            return hexString.toString();
+            return java.util.HexFormat.of().formatHex(digest);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 MessageDigest not available", e);
         }

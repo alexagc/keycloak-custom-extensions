@@ -113,7 +113,9 @@ public class WebhookEventListenerProviderFactory implements EventListenerProvide
 
     @Override
     public void close() {
-        // HttpClient handles its own executor lifecycle in Java 21
+        if (httpClient != null) {
+            httpClient.close();
+        }
         LOG.debug("Closing WebhookEventListenerProviderFactory.");
     }
 

@@ -59,4 +59,21 @@ class HibpPrefixCacheTest {
         assertEquals(0, cache.size());
         assertNull(cache.get("AAAAA"));
     }
+
+    @Test
+    @DisplayName("Shared singleton cache instance management")
+    void testSharedSingleton() {
+        HibpPrefixCache.resetShared();
+        HibpPrefixCache shared1 = HibpPrefixCache.getOrCreateShared(100, 60);
+        HibpPrefixCache shared2 = HibpPrefixCache.getOrCreateShared(100, 60);
+
+        assertEquals(shared1, shared2);
+        shared1.put("CCCCC", Map.of("S", 10));
+        assertNotNull(shared2.get("CCCCC"));
+
+        HibpPrefixCache.resetShared();
+        HibpPrefixCache shared3 = HibpPrefixCache.getOrCreateShared(100, 60);
+        assertNull(shared3.get("CCCCC"));
+        HibpPrefixCache.resetShared();
+    }
 }

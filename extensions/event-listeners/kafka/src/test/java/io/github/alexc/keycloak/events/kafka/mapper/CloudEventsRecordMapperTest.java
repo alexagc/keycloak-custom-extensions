@@ -102,6 +102,14 @@ class CloudEventsRecordMapperTest {
 
         String representation = (String) data.get("representation");
         assertTrue(representation.contains("\"password\":\"******\""));
+
+        // When includeRepresentation is false, representation must be null
+        String jsonWithoutRep = CloudEventsRecordMapper.toAdminCloudEvent(adminEvent, "my-realm", false);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> mapWithoutRep = JsonSerialization.readValue(jsonWithoutRep, Map.class);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> dataWithoutRep = (Map<String, Object>) mapWithoutRep.get("data");
+        org.junit.jupiter.api.Assertions.assertNull(dataWithoutRep.get("representation"));
     }
 
     @Test

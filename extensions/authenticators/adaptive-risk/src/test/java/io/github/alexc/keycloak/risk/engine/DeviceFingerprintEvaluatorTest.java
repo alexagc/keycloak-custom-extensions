@@ -83,4 +83,28 @@ class DeviceFingerprintEvaluatorTest {
         eq(DeviceFingerprintEvaluator.ATTR_KNOWN_FINGERPRINTS),
         argThat(list -> list.contains("hash-1") && list.contains("hash-2") && list.size() == 2));
   }
+
+  @Test
+  @DisplayName("Should evict oldest device fingerprint (FIFO) when capacity exceeds 10")
+  void testFifoEvictionOfOldestFingerprint() {
+    UserModel user = mock(UserModel.class);
+    // Already has 10 fingerprints: hash-1 through hash-10
+    List<String> existing = java.util.stream.IntStream.rangeClosed(1, 10)
+        .mapToObj(i -> "hash-" + i)
+        .collect(java.util.stream.Collectors.toList());
+    when(user.getAttributeStream(DeviceFingerprintEvaluator.ATTR_KNOWN_FINGERPRINTS))
+        .thenReturn(existing.stream());
+
+    // Record the 11th fingerprint
+    DeviceFingerprintEvaluator.recordDeviceFingerprint(user, "hash-11");
+
+    verify(user).setAttribute(
+        eq(DeviceFingerprintEvaluator.ATTR_KNOWN_FINGERPRINTS),
+        argThat(list ->
+            list.size() == 10
+            && !list.contains("hash-1") // Oldest evicted
+            && list.contains("hash-2")
+            && list.contains("hash-11") // Newest retained
+        ));
+  }
 }

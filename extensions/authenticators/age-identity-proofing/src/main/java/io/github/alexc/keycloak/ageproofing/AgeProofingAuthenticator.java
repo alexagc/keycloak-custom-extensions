@@ -81,7 +81,10 @@ public class AgeProofingAuthenticator implements Authenticator {
             return;
         }
 
-        VerificationEvidence evidence = validator.validate(rawToken, config);
+        String expectedNonce = context.getAuthenticationSession() != null
+                ? context.getAuthenticationSession().getAuthNote(AUTH_NOTE_NONCE)
+                : null;
+        VerificationEvidence evidence = validator.validate(rawToken, config, expectedNonce);
         if (evidence.success()) {
             user.setSingleAttribute(ATTR_AGE_VERIFIED, "true");
             user.setSingleAttribute(ATTR_AGE_VERIFIED_AT, String.valueOf(evidence.verifiedAt()));

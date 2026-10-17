@@ -55,11 +55,7 @@ public final class DeviceFingerprintEvaluator {
     try {
       MessageDigest md = MessageDigest.getInstance("SHA-256");
       byte[] digest = md.digest(raw.getBytes(StandardCharsets.UTF_8));
-      StringBuilder hex = new StringBuilder(64);
-      for (byte b : digest) {
-        hex.append(String.format("%02x", b));
-      }
-      return hex.toString();
+      return java.util.HexFormat.of().formatHex(digest);
     } catch (NoSuchAlgorithmException e) {
       throw new IllegalStateException("SHA-256 message digest must be available", e);
     }
@@ -105,9 +101,14 @@ public final class DeviceFingerprintEvaluator {
     Set<String> known = new LinkedHashSet<>(getKnownFingerprints(user));
     known.add(fingerprint);
 
-    // Limit stored fingerprints to prevent user attribute bloat
-    List<String> list = known.stream().limit(MAX_SAVED_FINGERPRINTS).collect(Collectors.toList());
-    user.setAttribute(ATTR_KNOWN_FINGERPRINTS, list);
+    // Evict oldest fingerprints from the front (FIFO) if capacity exceeded
+    while (known.size() > MAX_SAVED_FINGERPRINTS) {
+      var iterator = known.iterator();
+      iterator.next();
+      iterator.remove();
+    }
+
+    user.setAttribute(ATTR_KNOWN_FINGERPRINTS, new java.util.ArrayList<>(known));
   }
 
   /**
